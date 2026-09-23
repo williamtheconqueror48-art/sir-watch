@@ -8,6 +8,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SiteHeader } from "../home-client";
+import { searchShards, getShardManifest, type ShardRecord } from "../../lib/shards";
 
 type Record = {
   id: number;
@@ -34,6 +35,9 @@ export default function DeletionsPage() {
   const [q, setQ] = useState("");
   const [state, setState] = useState("");
   const [submitted, setSubmitted] = useState({ q: "", state: "" });
+  const [shardRecords, setShardRecords] = useState<ShardRecord[]>([]);
+  const [shardStatus, setShardStatus] = useState<"idle" | "loading" | "ready" | "unavailable">("idle");
+  const [shardNote, setShardNote] = useState<string | null>(null);
 
   async function runSearch(p: number, qq: string, ss: string) {
     setLoading(true);
@@ -56,6 +60,21 @@ export default function DeletionsPage() {
     } finally {
       setLoading(false);
     }
+    // National static archive (name-sharded JSON): runs alongside the ledger DB.
+    if (qq.trim().length >= 2) {
+      setShardStatus("loading");
+      try {
+        const [hits, man] = await Promise.all([searchShards(qq, 200), getShardManifest()]);
+        setShardRecords(hits);
+        setShardNote(man ? `Static archive · built ${String(man.built_at).slice(0, 10)} · per-dataset source hashes in manifest` : null);
+        setShardStatus("ready");
+      } catch {
+        setShardStatus("unavailable");
+      }
+    } else {
+      setShardRecords([]);
+      setShardStatus("idle");
+    }
   }
 
   useEffect(() => {
@@ -71,7 +90,12 @@ export default function DeletionsPage() {
         <p className="bl-p">
           Name-by-name deletion records recovered from published electoral
           rolls and deletion lists. Search a name to see where it was
-          recorded as deleted, with the source roll for every row.
+          recorded as deleted, with the source roll for every row. A separate
+          static archive below holds name-level SIR records (Karnataka draft-roll
+          ASD index, discrepancy notices, and the CEO ASDDO dashboard) — millions
+          of name-sharded rows queried in your browser, no database required.
+          These are published records, not all of them deletions: check each
+          row's dataset and source.
         </p>
         <p className="bl-p bl-dim bl-small">
           Records are shown exactly as published in the source. Absence of a
@@ -194,6 +218,65 @@ export default function DeletionsPage() {
               </button>
             </div>
           </>
+        )}
+
+        {submitted.q.trim().length >= 2 && (
+          <section style={{ marginTop: 32 }}>
+            <h2 className="bl-h1" style={{ fontSize: "1.1rem" }}>
+              NAME-LEVEL SIR RECORDS · STATIC ARCHIVE
+            </h2>
+            <p className="bl-p bl-dim bl-small">
+              {shardStatus === "loading" && "SEARCHING SHARDED ROWS…"}
+              {shardStatus === "ready" &&
+                `${shardRecords.length} MATCHES IN THE STATIC ARCHIVE — NAME-LEVEL SIR RECORDS, NOT ALL DELETIONS (SEE DATASET)`}
+              {shardStatus === "unavailable" &&
+                "STATIC ARCHIVE OFFLINE — LEDGER RESULTS ABOVE ARE UNAFFECTED."}
+              {shardNote && shardStatus === "ready" ? ` · ${shardNote}` : ""}
+            </p>
+            {shardStatus === "ready" && shardRecords.length > 0 && (
+              <div style={{ overflowX: "auto" }}>
+                <table className="bl-table">
+                  <thead>
+                    <tr>
+                      <th>VOTER NAME</th>
+                      <th>EPIC</th>
+                      <th>DISTRICT</th>
+                      <th>ASSEMBLY SEAT</th>
+                      <th>BOOTH</th>
+                      <th>REASON</th>
+                      <th>DATASET</th>
+                      <th>SOURCE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shardRecords.map((r, i) => (
+                      <tr key={`${r.dataset}-${i}`}>
+                        <td>{r.voter_name}</td>
+                        <td>{r.epic_masked ?? "NOT AVAILABLE IN SOURCE DATA"}</td>
+                        <td>{r.district ?? "NOT AVAILABLE IN SOURCE DATA"}</td>
+                        <td>{r.ac_name ?? "NOT AVAILABLE IN SOURCE DATA"}</td>
+                        <td>
+                          {r.booth_no ?? "NOT AVAILABLE IN SOURCE DATA"}
+                          {r.booth_name ? ` · ${r.booth_name}` : ""}
+                        </td>
+                        <td>{r.deletion_reason ?? "NOT STATED IN SOURCE"}</td>
+                        <td title={r.source_label}>{r.dataset}</td>
+                        <td>
+                          {r.source_url.startsWith("http") ? (
+                            <a href={r.source_url} target="_blank" rel="noreferrer">
+                              ROLL
+                            </a>
+                          ) : (
+                            r.source_url
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
         )}
 
         <footer className="bl-footer">

@@ -1,0 +1,2 @@
+data/shards/** linguist-vendored
+*.json.gz binary
