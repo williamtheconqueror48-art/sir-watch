@@ -5,3 +5,7 @@ out/
 .env
 .env*.local
 .DS_Store
+data/raw/
+data/mirror/
+data/ingest_test/
+data/*.jsonl
