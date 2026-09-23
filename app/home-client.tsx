@@ -97,14 +97,50 @@ const CARD_META: DatasetCard[] = [
       "Full draft-roll entries — NOT deletions. The source PDFs carry no EPIC field at all.",
     source: "CEO Uttar Pradesh / district NIC sites via cdn.s3waas.gov.in · retrieved 2026-09-23",
   },
+  {
+    key: "cg-form10",
+    title: "Chhattisgarh SIR objections (Form 10)",
+    state: "Chhattisgarh",
+    what: "Objections to inclusion of names received in Form 7 during the SIR-2026 claims & objections period (23.12.2025–22.01.2026), from DEO claim pages of Balodabazar-Bhatapara, Bemetara, Dantewada, Dhamtari, Mahasamund and Marwahi.",
+    claimNote:
+      "Objections received — NOT deletions, NOT adjudication records. Zero plaintext EPICs found in any row (independent scan 2026-09-23).",
+    source: "DEO sites (Balodabazar-Bhatapara, Bemetara, Dantewada, Dhamtari, Mahasamund, Marwahi) · retrieved 2026-09-23",
+  },
+  {
+    key: "kl-form9",
+    title: "Kerala SIR inclusion claims (Form 9)",
+    state: "Kerala",
+    what: "Applications for inclusion of name received in Form 6, published by CEO Kerala as Form-9 lists (27 PDFs, 7,486 rows; serials verified contiguous per file).",
+    claimNote:
+      "Claims for inclusion — NOT registered voters, NOT deletions. Zero plaintext EPICs found in any row (independent scan 2026-09-23).",
+    source: "CEO Kerala (ceo.kerala.gov.in) · retrieved 2026-09-23",
+  },
+  {
+    key: "kl-form10",
+    title: "Kerala SIR deletion objections (Form 10)",
+    state: "Kerala",
+    what: "Applications for objection to inclusion of names received in Form 7, published by CEO Kerala as Form-10 lists (14 PDFs, 46 rows).",
+    claimNote:
+      "Objections — NOT adjudicated deletions. Zero plaintext EPICs found in any row (independent scan 2026-09-23).",
+    source: "CEO Kerala (ceo.kerala.gov.in) · retrieved 2026-09-23",
+  },
+  {
+    key: "kl-form11a",
+    title: "Kerala SIR address-shift applications (Form 11A)",
+    state: "Kerala",
+    what: "Applications for shifting of address within the constituency received in Form 8, published by CEO Kerala as Form-11A lists (8 PDFs, 58 rows).",
+    claimNote:
+      "Address shifts within the constituency — NOT corrections, NOT deletions. Zero plaintext EPICs found in any row (independent scan 2026-09-23).",
+    source: "CEO Kerala (ceo.kerala.gov.in) · retrieved 2026-09-23",
+  },
 ];
 
 const COVERAGE: [string, string, string][] = [
   ["Karnataka", "LIVE", "ASD index, discrepancy notices, ASDDO dashboard"],
   ["West Bengal", "LIVE", "Adjudication records — Bhabanipur + Ballygunge ACs, Kolkata"],
   ["Uttar Pradesh", "LIVE", "Service-elector draft entries, 4 ACs (not deletions)"],
-  ["Kerala", "IN AUDIT", "7,590 claims/objections rows staged"],
-  ["Chhattisgarh", "IN AUDIT", "3,729 objection rows staged"],
+  ["Kerala", "LIVE", "Inclusion claims (Form 9), deletion objections (Form 10), address shifts (Form 11A)"],
+  ["Chhattisgarh", "LIVE", "Objections to inclusion (Form 10), 6 DEO claim pages"],
   ["Mizoram", "IN AUDIT", "6 rows + documents staged"],
   ["Puducherry", "IN AUDIT", "9 rows (5 deletions + 4 additions) staged"],
   ["Bihar", "STAGED — UNAUDITED", "3 community datasets, ~595 MB"],
@@ -153,7 +189,16 @@ export default function HomeClient() {
         return;
       }
       const rows: Record<string, number> = {};
-      for (const k of ["ka-asd", "ka-asddo", "ka-notices", "up-draftroll"]) {
+      for (const k of [
+        "ka-asd",
+        "ka-asddo",
+        "ka-notices",
+        "up-draftroll",
+        "cg-form10",
+        "kl-form9",
+        "kl-form10",
+        "kl-form11a",
+      ]) {
         const d = man[k] as { rows?: number } | undefined;
         if (d && typeof d.rows === "number") rows[k] = d.rows;
       }
@@ -206,7 +251,7 @@ export default function HomeClient() {
             </p>
             <p className="bl-p bl-dim bl-small">
               {shardTotal === null ? "…" : inr(shardTotal)} static-archive rows
-              (Karnataka + Uttar Pradesh) + {inr(WB_ROWS)} West Bengal
+              (Karnataka + Uttar Pradesh + Chhattisgarh + Kerala) + {inr(WB_ROWS)} West Bengal
               adjudication records ({WB_LABEL}).
             </p>
             <p className="bl-p bl-dim bl-small">

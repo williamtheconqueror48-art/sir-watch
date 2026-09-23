@@ -7,7 +7,15 @@
  * and SHARDS.md.
  */
 
-export type ShardDatasetKey = "ka-asd" | "ka-notices" | "ka-asddo" | "up-draftroll";
+export type ShardDatasetKey =
+  | "ka-asd"
+  | "ka-notices"
+  | "ka-asddo"
+  | "up-draftroll"
+  | "cg-form10"
+  | "kl-form9"
+  | "kl-form10"
+  | "kl-form11a";
 
 type ShardManifest = {
   v: number;
@@ -17,6 +25,10 @@ type ShardManifest = {
   "ka-notices"?: DatasetMeta;
   "ka-asddo"?: DatasetMeta;
   "up-draftroll"?: DatasetMeta;
+  "cg-form10"?: DatasetMeta;
+  "kl-form9"?: DatasetMeta;
+  "kl-form10"?: DatasetMeta;
+  "kl-form11a"?: DatasetMeta;
 };
 
 type ShardEntry = {
@@ -33,6 +45,8 @@ type DatasetMeta = {
   rows: number;
   shard_count: number;
   shards: Record<string, ShardEntry>;
+  /** source filename -> original source URL (per-file provenance) */
+  file_urls?: Record<string, string>;
   provenance: {
     source_project: string;
     source_branch: string;
@@ -108,9 +122,28 @@ const DATASET_LABEL: Record<ShardDatasetKey, string> = {
   "ka-asddo": "Karnataka CEO ASDDO dashboard (community mirror)",
   "up-draftroll":
     "Uttar Pradesh draft-roll service-electors entries (full roll — NOT a deletion; CEO UP / district NIC)",
+  "cg-form10":
+    "Chhattisgarh SIR objections in Form 7 (Form-10 list — objections received, NOT deletions; DEO claim pages)",
+  "kl-form9":
+    "Kerala SIR inclusion claims in Form 6 (Form-9 list — claims for inclusion, NOT registered voters; CEO Kerala)",
+  "kl-form10":
+    "Kerala SIR deletion objections in Form 7 (Form-10 list — objections, NOT adjudicated deletions; CEO Kerala)",
+  "kl-form11a":
+    "Kerala SIR address-shift applications in Form 8 (Form-11A list — shifts within constituency; CEO Kerala)",
 };
 
-function toRecord(ds: ShardDatasetKey, fields: string[], row: unknown[]): ShardRecord {
+function fileUrl(meta: DatasetMeta, sourceFile: string | null): string {
+  if (sourceFile && meta.file_urls && meta.file_urls[sourceFile])
+    return meta.file_urls[sourceFile];
+  return "NOT AVAILABLE IN SOURCE DATA";
+}
+
+function toRecord(
+  ds: ShardDatasetKey,
+  meta: DatasetMeta,
+  fields: string[],
+  row: unknown[]
+): ShardRecord {
   const g = (name: string): string | null => {
     const i = fields.indexOf(name);
     const v = i >= 0 ? (row[i] as string | null) : null;
@@ -130,6 +163,68 @@ function toRecord(ds: ShardDatasetKey, fields: string[], row: unknown[]): ShardR
   } else if (ds === "ka-asddo") {
     reason = g("reason");
     source_url = driveUrl(g("drive_file_id"));
+  } else if (ds === "cg-form10" || ds === "kl-form10") {
+    // Form-10 lists: objections to inclusion received in Form 7 — not deletions.
+    state = ds === "cg-form10" ? "Chhattisgarh" : "Kerala";
+    const r = g("reason");
+    reason = r ? `Objection received — ${r}` : "Objection received (reason not stated)";
+    source_url = fileUrl(meta, g("source_file"));
+    return {
+      dataset: ds,
+      voter_name: (g("name") ?? "") as string,
+      epic_masked: g("epic_masked"),
+      state,
+      district: null,
+      ac_name: g("constituency"),
+      booth_no: g("part"),
+      booth_name: null,
+      deletion_reason: reason,
+      source_url,
+      source_label: DATASET_LABEL[ds],
+    };
+  } else if (ds === "kl-form9") {
+    // Form-9 lists: applications for inclusion of name received in Form 6.
+    state = "Kerala";
+    const rel = g("relative_name");
+    const reln = g("relationship");
+    reason =
+      "Inclusion claim received (Form 6)" +
+      (rel ? ` — relative: ${rel}${reln ? ` (${reln})` : ""}` : "");
+    source_url = fileUrl(meta, g("source_file"));
+    return {
+      dataset: ds,
+      voter_name: (g("name") ?? "") as string,
+      epic_masked: null,
+      state,
+      district: null,
+      ac_name: g("constituency"),
+      booth_no: null,
+      booth_name: null,
+      deletion_reason: reason,
+      source_url,
+      source_label: DATASET_LABEL[ds],
+    };
+  } else if (ds === "kl-form11a") {
+    // Form-11A lists: applications for shifting of address within the constituency.
+    state = "Kerala";
+    const addr = g("new_address");
+    reason =
+      "Address-shift application received (Form 8 → Form 11A)" +
+      (addr ? ` — new address: ${addr}` : "");
+    source_url = fileUrl(meta, g("source_file"));
+    return {
+      dataset: ds,
+      voter_name: (g("name") ?? "") as string,
+      epic_masked: null,
+      state,
+      district: null,
+      ac_name: g("constituency"),
+      booth_no: null,
+      booth_name: null,
+      deletion_reason: reason,
+      source_url,
+      source_label: DATASET_LABEL[ds],
+    };
   } else {
     // up-draftroll: full draft-roll service-elector entries, not deletions.
     state = "Uttar Pradesh";
@@ -164,7 +259,16 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
   const q = query.trim().toUpperCase();
   if (q.length < 2) return [];
   const out: ShardRecord[] = [];
-  const keys: ShardDatasetKey[] = ["ka-asd", "ka-notices", "ka-asddo", "up-draftroll"];
+  const keys: ShardDatasetKey[] = [
+    "ka-asd",
+    "ka-notices",
+    "ka-asddo",
+    "up-draftroll",
+    "cg-form10",
+    "kl-form9",
+    "kl-form10",
+    "kl-form11a",
+  ];
   await Promise.all(
     keys.map(async (dk) => {
       const meta = man[dk];
@@ -180,7 +284,7 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
       for (const shard of parts) {
         if (!shard) continue;
         for (const row of shard.rows) {
-          const rec = toRecord(dk, meta.fields, row);
+          const rec = toRecord(dk, meta, meta.fields, row);
           if (rec.voter_name.toUpperCase().includes(q)) {
             out.push(rec);
             if (out.length >= limit) break;
