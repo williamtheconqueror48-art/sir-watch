@@ -84,7 +84,7 @@ export default function TimelinePage() {
             {events.map((e) => (
               <div className="bl-timeline-item" key={e.id}>
                 <div className="bl-small bl-dim">
-                  {e.event_date ?? "DATE NOT STATED IN SOURCE"}
+                  {e.event_date ? e.event_date.slice(0, 10) : "DATE NOT STATED IN SOURCE"}
                   {e.date_precision !== "exact" ? ` (${e.date_precision})` : ""}
                   {" · "}
                   {e.commissioner.toUpperCase()}

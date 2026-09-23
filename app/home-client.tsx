@@ -79,6 +79,11 @@ function fmt(n: string | null): string {
   return v.toLocaleString("en-IN");
 }
 
+function fmtDate(d: string | null | undefined): string {
+  if (!d) return "—";
+  return d.slice(0, 10); // YYYY-MM-DD — never raw timestamps on screen
+}
+
 export default function HomeClient() {
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [sources, setSources] = useState<string[]>([]);
@@ -171,8 +176,8 @@ export default function HomeClient() {
               <div className="bl-panel-body">
                 <p className="bl-p">{p.coverage}</p>
                 <p className="bl-p bl-dim bl-small">
-                  ANNOUNCED: {p.announced_date ?? "—"} · ENUMERATION:{" "}
-                  {p.enumeration_start ?? "—"} → {p.enumeration_end ?? "—"}
+                  ANNOUNCED: {fmtDate(p.announced_date)} · ENUMERATION:{" "}
+                  {fmtDate(p.enumeration_start)} → {fmtDate(p.enumeration_end)}
                   {p.electorate_covered_cr
                     ? ` · ELECTORATE: ${p.electorate_covered_cr} CRORE`
                     : ""}

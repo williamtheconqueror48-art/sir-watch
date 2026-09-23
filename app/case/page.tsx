@@ -77,7 +77,7 @@ export default function CasePage() {
             {events.map((e) => (
               <div className="bl-timeline-item" key={e.id}>
                 <div className="bl-small bl-dim">
-                  {e.event_date ?? "DATE NOT STATED"} ·{" "}
+                  {e.event_date ? e.event_date.slice(0, 10) : "DATE NOT STATED"} ·{" "}
                   {e.event_type.toUpperCase()}
                 </div>
                 <div style={{ fontWeight: 700, margin: "4px 0" }}>

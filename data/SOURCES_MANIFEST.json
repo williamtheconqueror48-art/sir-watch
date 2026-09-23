@@ -1,0 +1,359 @@
+{
+  "generated_at": "2026-09-23",
+  "retrieval_date": "2026-09-23",
+  "total_files": 39,
+  "files": [
+    {
+      "filename": "ceo_lakshadweep_sir_enumeration_keyfindings.pdf",
+      "source_url": "https://ceolakshadweep.gov.in/Users/download_pdf_press_notes/UHJlcyBOb3RlICBLZXkgZmluZGluZ3Mgb2YgdGhlIEVudW1lcmF0aW9uIFBoYXNlIGluIExha3NoYWR3ZWVwIChVcGRhdGVkKS5wZGY=",
+      "retrieved_at": "2026-09-23",
+      "sha256": "1644219b6772c8e546963fdfeb33ddfc45cb9ea76f02c2793fe2c2d44dbe146a",
+      "rows_or_pages": "8 pages",
+      "description": "CEO Lakshadweep Press Note 16.12.2025: Key Findings of Enumeration Phase (04.11.2025-11.12.2025) - scanned 8-page note",
+      "source_type": "ceo_press_note"
+    },
+    {
+      "filename": "eci_2026-05-14_sir_phase3_order.pdf",
+      "source_url": "https://cdn.s3waas.gov.in/s35751ec3e9a4feab575962e78e006250d/uploads/2026/06/17819527597704.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "cdc19802480893608a7992645815611df730e1fa3fbc4f6c7b4aca1b8946d347",
+      "rows_or_pages": "30 pages",
+      "description": "ECI order No.23/2025-ERS(Vol.II) dated 14 May 2026 launching SIR Phase-III (16 states + 3 UTs); annexures incl. state-wise BLO/BLA/elector table",
+      "source_type": "eci_press_note"
+    },
+    {
+      "filename": "eci_pn_348_2025_sir_phase2_begins.pdf",
+      "source_url": "https://ceolakshadweep.gov.in/Users/download_pdf_draft_roll_2024/MTc2MjU3OTc1NV82MzU1MjlkNDBiNjllM2FmODRiZC5wZGY=",
+      "retrieved_at": "2026-09-23",
+      "sha256": "8af927289874b6ea60f5d3b456b460eb236158e04e1a61ce3b99cb389334f150",
+      "rows_or_pages": "1 page",
+      "description": "ECI Press Note No. ECI/PN/348/2025 dated 04.11.2025: SIR Phase-II begins in 9 states + 3 UTs (~51 crore electors, 321 districts, 1843 ACs); hosted on CEO Lakshadweep site",
+      "source_type": "eci_press_note"
+    },
+    {
+      "filename": "ls_sir_phases_summary_2026-07-25.pdf",
+      "source_url": "https://sansad.in/getFile/lsapps/loksabhaquestions/annex/188/AU990_8qnMvo.pdf?source=lsapps",
+      "retrieved_at": "2026-09-23",
+      "sha256": "dc528e859d23aae7b748a9ab91e3b0bf2cbe1b0f93a0248244580fc2e5b00420",
+      "rows_or_pages": "2 pages",
+      "description": "Lok Sabha Q&A annexure (MoS Law & Justice, 25.07.2026) summarising SIR Phases I-III per ECI press notes",
+      "source_type": "parliament_answer",
+      "hash_note": "findings JSON hash had a transcription typo; this is the actual file hash"
+    },
+    {
+      "filename": "pib_2025-09-30_sir_bihar_final_roll.pdf",
+      "source_url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2173316&reg=3&lang=2",
+      "retrieved_at": "2026-09-23",
+      "sha256": "e725e2d525fd0efa8ab3286b5edbba6415a38a9994259299f0bf68651dc52ac0",
+      "rows_or_pages": "2 pages",
+      "description": "Rendered capture of PIB release 2173316 (30.09.2025): Bihar SIR final roll outcome",
+      "source_type": "pib_press_release_render"
+    },
+    {
+      "filename": "pib_2025-11-04_sir_phase2_begins.pdf",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2186480&reg=48&lang=2",
+      "retrieved_at": "2026-09-23",
+      "sha256": "ecd2bc98f2a7a9a9816cc900ad30fb0511d6e0be56a85742fcce9afc56e6da98",
+      "rows_or_pages": "2 pages",
+      "description": "Rendered capture of PIB release 2186480 (04.11.2025): SIR Phase-II begins, ~51 crore electors",
+      "source_type": "pib_press_release_render"
+    },
+    {
+      "filename": "pib_2025-12-07_sir_phase2_statewise_ef_status.pdf",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2200040&reg=6&lang=1",
+      "retrieved_at": "2026-09-23",
+      "sha256": "791044bf3617f9443a2a944f37d84398ebf52d66510d6ed5dec30e734af56327",
+      "rows_or_pages": "3 pages",
+      "description": "Rendered capture of PIB daily bulletin 2200040 (07.12.2025): state-wise pre-SIR electors table as on 27.10.2025, total 50,97,44,423",
+      "source_type": "pib_press_release_render"
+    },
+    {
+      "filename": "pib_2025-12-09_sir_phase2_statewise_ef_status.pdf",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2200839&reg=3&lang=2",
+      "retrieved_at": "2026-09-23",
+      "sha256": "8a95171999604aeadc3f0cf3baed22a5981d445d533f903e14ec707ca66565ad",
+      "rows_or_pages": "3 pages",
+      "description": "Rendered capture of PIB daily bulletin 2200839 (09.12.2025): state-wise electors table incl. Rajasthan 193-Anta AC, total 50,99,72,687",
+      "source_type": "pib_press_release_render"
+    },
+    {
+      "filename": "pib_2026-05-14_sir_phase3_order.pdf",
+      "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2260955&reg=3&lang=2",
+      "retrieved_at": "2026-09-23",
+      "sha256": "5e2b7d52fdbdf65225426aa6c66bfa8a955d69e17c999c4f7121f85a448fe0ef",
+      "rows_or_pages": "4 pages",
+      "description": "Rendered capture of PIB release 2260955 (14.05.2026): SIR Phase-III in 16 states + 3 UTs, state-wise electors as on 12.05.2026 totalling 36,73,87,831",
+      "source_type": "pib_press_release_render"
+    },
+    {
+      "filename": "sc_adr_vs_eci_adr_final_additional_affidavit_2025-10.pdf",
+      "source_url": "https://adrindia.org/sites/default/files/2025-10/Final_Additional_Affidavit_Bihar_SIR.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "1e34c9235313ce8c6d0c3dbf1abcd1dff4bd7f61c37dd8a82cf4fefbe2504ecf",
+      "rows_or_pages": "251 pages",
+      "description": "Additional affidavit ON BEHALF OF THE PETITIONERS (ADR) in W.P.(C) 640/2025, with annexures A1\u2013A15; dated 08.10.2025 (note: petitioners-side filing, not ECI's)",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sc_adr_vs_eci_adr_writ_petition_2025-07.pdf",
+      "source_url": "https://adrindia.org/sites/default/files/ADR_Writ_Petition_Final.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "d5ac049366827500e7abedc369e96093da04dde4824237adea7d15d1bee9a91c",
+      "rows_or_pages": "237 pages",
+      "description": "ADR writ petition (Article 32 PIL) with affidavit, challenging ECI's 24.06.2025 Bihar SIR order; writ petition with I.A. for stay",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sc_adr_vs_eci_eci_additional_affidavit_2025-08.pdf",
+      "source_url": "https://www.scobserver.in/wp-content/uploads/2025/08/Additional-Affidavit-Bihar-SIR-Election-Commission.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "b7767aa305639dee88d7e44e97958a9b7b081e36c147bb04904dd83e3e1c7bf2",
+      "rows_or_pages": "93 pages",
+      "description": "ECI additional affidavit in W.P.(C) 640/2025; annexures include booth-level meeting proceedings across Bihar and ECI press note ECI/PN/270/2025",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sc_adr_vs_eci_eci_counter_affidavit_2025-07-21.pdf",
+      "source_url": "https://drive.google.com/file/d/1gUYlBEurNdt9UEEXwcNEtREE6tQ78IOB/view",
+      "retrieved_at": "2026-09-23",
+      "sha256": "7d63c0d8e1e41a4cb3e84b2a1021cb3b733c2291438d3519e45abaec01038e4f",
+      "rows_or_pages": "789 pages",
+      "description": "ECI counter affidavit in W.P.(C) 640/2025 (Adv. Eklavya Dwivedi); contains ECI's SIR data annexures \u2014 BLA figures from political parties, enumeration figures, draft-roll publication details",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sc_adr_vs_eci_final_judgment_2026-05-27.pdf",
+      "source_url": "https://images.assettype.com/barandbench/2026-05-27/af9n1a8y/ADR_v__ECI.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "e2350e656c3bf16fef0c6dda06b7d0f150b8d6e23f31accdf801a1cc018fdafa",
+      "rows_or_pages": "124 pages",
+      "description": "Association for Democratic Reforms & Ors. vs Election Commission of India & Ors. \u2014 final judgment (REPORTABLE, 2026 INSC 564), CJI Surya Kant and Justice Joymalya Bagchi, upholding SIR as constitutionally valid; Aadhaar added as 12th identity document",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sc_adr_vs_eci_petitioners_written_submissions_2025-07.pdf",
+      "source_url": "https://www.scobserver.in/wp-content/uploads/2025/07/Volume-I-Written-Submissions-Bihar-SIR-Sr-Adv-Gopal-Sankaranarayanan-Prashant-Bhushan-PC-Sen-Vrinda-Grover.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "32382065303be16284075e0f1f71c4bae3aa4b9f6be695a113b570e371968627",
+      "rows_or_pages": "72 pages",
+      "description": "Volume I \u2014 written submissions on behalf of petitioners (Sr Adv Gopal Sankaranarayanan, Prashant Bhushan, P.C. Sen, Vrinda Grover)",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sc_adr_vs_eci_sc_order_2025-08-22.pdf",
+      "source_url": "https://adrindia.org/sites/default/files/SC_Order.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "1daf911272ef17af5d3992be36b070998e283643460cabd1a2afa3c3e153945f",
+      "rows_or_pages": "11 pages",
+      "description": "Record of proceedings, W.P.(C) 640/2025 \u2014 interim order dated 22.08.2025 (Justices Surya Kant, Joymalya Bagchi); status report on draft-roll sharing with 12 recognised political parties; claims/objections via Form 7",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sc_adr_vs_eci_sc_order_2025-11-11.pdf",
+      "source_url": "https://adrindia.org/sites/default/files/SC_Order_dated_11-Nov-2025.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "382b97e57b5e738b3f9412b5d6f867f30a96d4938fca2435e65d074a091d2d77",
+      "rows_or_pages": "2 pages",
+      "description": "Record of proceedings dated 11.11.2025 in W.P.(C) 1074/2025 (Dola Sen), tagged with W.P.(C) 640/2025; notice issued, counter affidavit directed",
+      "source_type": "sc_filing"
+    },
+    {
+      "filename": "sirwatch_raw/eci_denial_ians.html",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "bc5b5ef9f098a2af9ac9014677694879abf02c16297a7a6146bb46cf9792bff6",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "IANS report of ECI denial of the Indian Express dissent story (2026-09-23): \"no dissent recorded, all decisions unanimous\"",
+      "source_type": "media_investigation"
+    },
+    {
+      "filename": "sirwatch_raw/github_gouthamganeshm_Karnataka_Draft_Roll_2026_asd_bucket_00_00.json",
+      "source_url": "https://raw.githubusercontent.com/gouthamganeshm/Karnataka_Draft_Roll_2026/HEAD/docs/data-asd/roll/00/00.json",
+      "retrieved_at": "2026-09-23",
+      "sha256": "f26b16a9d2be368744f9c6fda47f3f91769ec5492978168c599bcdfb4c02882b",
+      "rows_or_pages": "139 data rows",
+      "description": "Sample hash-bucket from Karnataka SIR 2026 ASD (uncollectable elector) deletion index. Row schema: [sha256_suffix_of_EPIC, AC_no, part_no, serial, reason_code, old_part, old_serial, name_Kannada, relative_name_Kannada] \u2014 names plaintext; reason codes e.g. SHIFTED/DEAD/DUPLICATE. Source: ECI's per-part ASD PDFs reformatted by the project.",
+      "source_type": "github_dataset"
+    },
+    {
+      "filename": "sirwatch_raw/github_gouthamganeshm_Karnataka_Draft_Roll_2026_asd_manifest.json",
+      "source_url": "https://raw.githubusercontent.com/gouthamganeshm/Karnataka_Draft_Roll_2026/HEAD/docs/data-asd/manifest.json",
+      "retrieved_at": "2026-09-23",
+      "sha256": "e1a40afcf8b9355ae9b008448f91dd69a7355a7fc7368f59c0c56271d7510cda",
+      "rows_or_pages": "1 manifest file (metadata, not tabular)",
+      "description": "Coverage manifest for the Karnataka ASD index (not tabular): 10,766,778 deletion rows, 224/224 ACs, 100% of 60,305 parts, 0 unreadable. Per-AC row counts and coverage figures.",
+      "source_type": "github_dataset"
+    },
+    {
+      "filename": "sirwatch_raw/github_gouthamganeshm_Karnataka_Draft_Roll_2026_notices_bucket_00_0.json",
+      "source_url": "https://raw.githubusercontent.com/gouthamganeshm/Karnataka_Draft_Roll_2026/HEAD/docs/data-notices/roll/00/0.json",
+      "retrieved_at": "2026-09-23",
+      "sha256": "d93da178825f530484a196a97fa42bd23589f2c210f641df5cfcb12547b0a14c",
+      "rows_or_pages": "1054 data rows",
+      "description": "Sample hash-bucket from Karnataka SIR 2026 discrepancy/no-mapping notices index (parsed from CEO's 34 Google Drive district folders). Row schema: [sha256_suffix_of_EPIC, AC_no, part_no, serial, notice_reason, age, gender, name_Latin, drive_file_id] \u2014 names plaintext. Project reports 4,340,895 notices total (99.06% of CEO count).",
+      "source_type": "github_dataset"
+    },
+    {
+      "filename": "sirwatch_raw/github_omshivaprakash_karnataka-asddo-dashboard_asddo_bucket_00_00.json",
+      "source_url": "https://raw.githubusercontent.com/omshivaprakash/karnataka-asddo-dashboard/HEAD/docs/data/asddo/00/00.json",
+      "retrieved_at": "2026-09-23",
+      "sha256": "03364cdbb81f08a99daefb52bbd85f4b8ea63795653c4cbbbe6e2fe7b9ae8d92",
+      "rows_or_pages": "141 data rows",
+      "description": "Sample hash-bucket from companion Karnataka ASDDO deletion dashboard. Row schema (from docs/app.js decodeRecord): [suffix, name_English, relative_name_English, relation_idx, age, serial, reason_idx, ac_idx, file_idx, dup] \u2014 names plaintext; reason_idx maps to absent/shifted/death/duplicate/others. Cross-verified: hash suffix '0039ca48' matches the same voter in the gouthamganeshm ASD bucket, name in Kannada there, English here.",
+      "source_type": "github_dataset"
+    },
+    {
+      "filename": "sirwatch_raw/github_omshivaprakash_karnataka-asddo-dashboard_stats.json",
+      "source_url": "https://raw.githubusercontent.com/omshivaprakash/karnataka-asddo-dashboard/HEAD/docs/data/stats.json",
+      "retrieved_at": "2026-09-23",
+      "sha256": "2c8026f82cb694adbd63633c07caad604d56667b71b1056a454e98579aabe05b",
+      "rows_or_pages": "1 stats file (aggregate metadata, not name-level)",
+      "description": "Aggregate stats for the companion Karnataka ASDDO dataset (not tabular): 10,846,382 total ASDDO records (absent 15.4L, shifted 65.6L, death 16.4L, duplicate 7.0L, others 4.0L), district/age-band breakdowns.",
+      "source_type": "github_dataset"
+    },
+    {
+      "filename": "sirwatch_raw/gk365_sir_phase3.html",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "ef3a07c865851cda8a294f0f8e557f3855d15d857793a5420f7adfb4209b154a",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "GK365 exam-prep article summarising SIR Phase 3 facts and figures (secondary, exam-oriented)",
+      "source_type": "other"
+    },
+    {
+      "filename": "sirwatch_raw/ie_14_notes_infographic.png",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "b8450f67b2f6782aeb9be1564deaf88a18fab2736625432e1db088cc400bf763",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "Indian Express \"TEN MONTHS, 14 NOTES\" infographic enumerating each objection with date, author and topic",
+      "source_type": "media_investigation"
+    },
+    {
+      "filename": "sirwatch_raw/ie_dissent_maktoob.html",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "c90f2a19629e26aa8cc08887b581be08c7e0703c1a6bf4c093bc5de9456ab5c3",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "Maktoob Media report on the Indian Express 14-objections investigation (2026-09-23)",
+      "source_type": "media_investigation"
+    },
+    {
+      "filename": "sirwatch_raw/inc_ramesh_statement.html",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "8ee22a398e27be8c89948655d8fd83667e2f49c4fc2abf4cb569436ddaede411",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "Congress / Jairam Ramesh statement capture with claimed deletion figures (opposition claim, NOT ECI data)",
+      "source_type": "opposition_claim"
+    },
+    {
+      "filename": "sirwatch_raw/madhyamam_ecr_review.html",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "a920fbfbd932fcb0b967bf176f43130d6c36eb3f6db7ff2a8ffeec2fbe542a20",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "Madhyamam report: one year of SIR, ~6 crore names removed nationwide (2026-09)",
+      "source_type": "media_investigation"
+    },
+    {
+      "filename": "sirwatch_raw/media_altnews_sir_ballygunge_fullroll_explorer.html",
+      "source_url": "https://sir-data-decoded.altnews.in/Ballygunge/explorer.html",
+      "retrieved_at": "2026-09-23",
+      "sha256": "e0bc437f8ab3596680d055a500a4295ef76b5a941833f6a6dd63b3c369c52da3",
+      "rows_or_pages": "191204 rows",
+      "description": "Alt News 'SIR Data Decoded' dashboard explorer page containing the full digitized electoral roll of Ballygunge AC (all 191,204 voters: name, EPIC voter_id, booth). Saved untouched as published HTML with embedded record JSON. Bhabanipur + Ballygunge together = 352,287 digitized records, matching Alt News's stated total.",
+      "source_type": "media_investigation"
+    },
+    {
+      "filename": "sirwatch_raw/media_altnews_sir_bhabanipur_ballygunge_adjudication_records.html",
+      "source_url": "https://sir-data-decoded.altnews.in/see-adjudication-records.html",
+      "retrieved_at": "2026-09-23",
+      "sha256": "8ed6280b387349fff84aedf12795355a46856e8bd48226c24524cfc551da3699",
+      "rows_or_pages": "39605 rows",
+      "description": "Alt News 'SIR Data Decoded' dashboard page containing all 39,604 voter records placed under adjudication in Bhabanipur and Ballygunge constituencies (fields: voter name, EPIC voter_id, booth, serial, source CSV). Published by Alt News as its data appendix 'open to verification'. Saved untouched as published HTML with embedded record JSON.",
+      "source_type": "media_investigation"
+    },
+    {
+      "filename": "sirwatch_raw/media_altnews_sir_bhabanipur_fullroll_explorer.html",
+      "source_url": "https://sir-data-decoded.altnews.in/Bhabanipur/explorer.html",
+      "retrieved_at": "2026-09-23",
+      "sha256": "468f00310f521e7cdeca9b70c137dd675dc037d8576a84ad4449b5c64d793e7c",
+      "rows_or_pages": "161083 rows",
+      "description": "Alt News 'SIR Data Decoded' dashboard explorer page containing the full digitized electoral roll of Bhabanipur AC (all 161,083 voters: name, EPIC voter_id, booth). Saved untouched as published HTML with embedded record JSON.",
+      "source_type": "media_investigation"
+    },
+    {
+      "filename": "sirwatch_raw/medium_sir_analysis.html",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "3700da8792f4bf7374a1492bdba1aef7c226fa40c090660a442c52b5b09ef983",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "Medium analysis piece on SIR deletion scale (secondary commentary)",
+      "source_type": "other"
+    },
+    {
+      "filename": "sirwatch_raw/opencity_tn_sir_additions_deletions_ac_2026.csv",
+      "source_url": "https://data.opencity.in/dataset/0b5df931-c21e-4199-8386-3259d7917152/resource/d1724441-e1ca-4edc-b011-3681553d477a/download/chennai-sir-additions-deletions-2026.csv",
+      "retrieved_at": "2026-09-23",
+      "sha256": "48e6dc152d32283872b116d832a7a5b9ef958ea2c34b78fe4bc4800cafc63132",
+      "rows_or_pages": "273 data rows (AC-level aggregates)",
+      "description": "AC-LEVEL AGGREGATE ONLY (not name-level): Tamil Nadu SIR additions/deletions per AC by category (Deceased, Shifted/Absent, Enrolled at multiple places, Total). Downloaded as best available TN proxy; no name-level data exists on OpenCity.",
+      "source_type": "open_data_portal"
+    },
+    {
+      "filename": "sirwatch_raw/opencity_wb_sir_draft_rolls_2026.csv",
+      "source_url": "https://data.opencity.in/dataset/f534b035-5e5f-4b2d-bd48-b0549a7d222b/resource/c7cb58ef-4267-4386-8ab5-5a014078999c/download/wb-sir-draft-rolls-2026.csv",
+      "retrieved_at": "2026-09-23",
+      "sha256": "e8c19f21b540de34656ea69ce4ad12efab0b1abb535a7d1cc9351fb9cb4fdce7",
+      "rows_or_pages": "295 data rows (AC-level aggregates)",
+      "description": "AC-LEVEL AGGREGATE ONLY (not name-level): West Bengal SIR draft roll elector counts per AC (polling stations, male/female/other electors). Downloaded as best available WB proxy.",
+      "source_type": "open_data_portal"
+    },
+    {
+      "filename": "sirwatch_raw/sc_hearing_taxtmi.html",
+      "source_url": "NOT RECORDED IN FINDINGS JSON",
+      "retrieved_at": "2026-09-23",
+      "sha256": "933f2dbe7f4e2bfeb390ff3fe70e6b02c4aa63bfb1d46112d003c46e7a1cfc60",
+      "rows_or_pages": "NOT RECORDED",
+      "description": "TaxTMI report on Supreme Court SIR hearing, Jan 2026 (additions/deletions part of revision; Aadhaar admissibility)",
+      "source_type": "other"
+    },
+    {
+      "filename": "wayback_ceomaharashtra_draftroll_pressnote_2026_sample.pdf",
+      "source_url": "https://web.archive.org/web/20260901202421id_/https://ceoelection.maharashtra.gov.in/Downloads/PDF/Notification/Press%20Note%20English_31.08.2026%20Draft%20Roll.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "fd9843ccbe0487cef5ba44f0b62c8aceb3b113f4aec32d3bcfd971a5010f253d",
+      "rows_or_pages": "4 pages",
+      "description": "Maharashtra CEO press note on Draft Electoral Roll publication under SIR-2026 (published 31.08.2026); snapshot 2026-09-01",
+      "source_type": "ceo_roll_pdf"
+    },
+    {
+      "filename": "wayback_ceowb_form7_english_2025_sample.pdf",
+      "source_url": "https://web.archive.org/web/20250718192656id_/https://ceowestbengal.nic.in/Downloads/Forms/RollRevision/Form-7_English.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "45c6dd17dd94c4618101e5e5aa54cc4e768d6582dfe9a54f49a6a5701ba79081",
+      "rows_or_pages": "2 pages",
+      "description": "West Bengal CEO blank Form-7 (application for objection to / deletion of name in electoral roll), English; snapshot 2025-07-18",
+      "source_type": "ceo_roll_pdf"
+    },
+    {
+      "filename": "wayback_eci_sir_oldsirroll_S27_1_104_sample.pdf",
+      "source_url": "https://web.archive.org/web/20260512182416id_/https://www.eci.gov.in/sir/f3/S27/data/OLDSIRROLL/S27/1/S27_1_104.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "9b3acb919a11495921caf9085acfd2e8ce7885de0f1b22da8985583dbfa5849a",
+      "rows_or_pages": "12 pages",
+      "description": "ECI SIR archive: pre-SIR ('OLD') part-wise electoral roll PDF, state code S27, AC 1, part 104; snapshot 2026-05-12",
+      "source_type": "ceo_roll_pdf"
+    },
+    {
+      "filename": "wayback_eci_sir_oldsirroll_S27_1_111_sample.pdf",
+      "source_url": "https://web.archive.org/web/20260514170246id_/https://www.eci.gov.in/sir/f3/S27/data/OLDSIRROLL/S27/1/S27_1_111.pdf",
+      "retrieved_at": "2026-09-23",
+      "sha256": "be821537492789b8ad1b7fd2e05fbec798103efacfb13602d72f8bf47d119462",
+      "rows_or_pages": "11 pages",
+      "description": "ECI SIR archive: pre-SIR ('OLD') part-wise electoral roll PDF, state code S27, AC 1, part 111; snapshot 2026-05-14",
+      "source_type": "ceo_roll_pdf"
+    }
+  ]
+}
