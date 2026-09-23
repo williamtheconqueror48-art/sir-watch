@@ -101,3 +101,57 @@ Structured records (with verbatim-quote flags and source URLs) in `raw/_findings
 6. **ADR rejoinder + Application for Direction PDFs** — retry link resolution on adrindia.org.
 7. **data.gov.in API key** — user decision required.
 8. **Karnataka notices/ASD full-tree diff analysis** — reason-code breakdowns (SHIFTED vs DEAD vs DUPLICATE) once bulk mirror exists.
+
+## 8. National roll-hunt — second wave (2026-09-23)
+
+Four parallel streams; all complete. 11 new files staged in `data/raw/` (each with a 7-field `.provenance.json` sidecar); all 50 sidecars hash-verified, 0 mismatches. `SOURCES_MANIFEST.json` now lists 50 files. `data/mirror/` untouched (parent's Karnataka bulk-mirror clone in progress there). No database writes. No CAPTCHA bypassed, nothing paywalled, no logins.
+
+### 8a. State-code corrections (supersede §7.3)
+Header-rendered verification of actual roll PDFs: **S27 = Jharkhand** (not Maharashtra), **S13 = Maharashtra**. The `f1`–`f4` folder names do NOT align with published SIR phases (f1 holds AP + Haryana, both Phase-3 states) — treat as internal hosting batches.
+
+### 8b. ECI Wayback OLDSIRROLL tree (stream 1/4)
+Full `/sir/` prefix CDX query: the entire archived tree = 524 unique URLs, all `OLDSIRROLL` part-wise roll PDFs; no DRAFTSIRROLL/NEWSIRROLL subtree exists. 522 return 200 (2 archived 403s excluded). **All are pre-SIR baseline rolls (2002/2003 revisions)** — the "before" side only; no draft/final SIR roll anywhere in the archive. Snapshots span 2026-04 → 2026-08.
+
+| Code | State (verified) | PDFs | ACs archived |
+|---|---|---|---|
+| S01 | Andhra Pradesh | 1 | 26 |
+| S07 | Haryana | 2 | 9, 61 |
+| S11 | Kerala (code-table + Malayalam; header name not legible — partially verified) | 3 | 72, 107 |
+| S13 | Maharashtra | 2 | 53, 197 |
+| S19 | Punjab | 1 | 17 |
+| S24 | Uttar Pradesh | 1 | 237 |
+| S27 | Jharkhand | 490 | 1, 2 |
+| S29 | Telangana | 8 | 209, 210 |
+| U05 | Delhi NCT | 14 | 20, 42, 46, 57 |
+
+Nothing for Bihar (S04), WB (S25), TN (S22), MP (S12), Rajasthan (S20), Gujarat (S06), Karnataka (S10), Chhattisgarh (S26) — absence from the archive, not deletion. Archive is sparse vs real rolls (Jharkhand has 81 ACs; only ACs 1–2 archived). 5 samples staged: S27_2_58, S11_72_64, S13_53_78, S29_209_116, U05_46_64 (all <5MB, header-verified genuine). Telangana sample contains an EPIC column — noted in sidecar, no EPICs extracted.
+
+### 8c. CEO websites (stream 2/4) — 4 samples staged
+- **Kerala (S11):** ASD index at ceo.kerala.gov.in/asd-list ("SIR 2026 ASD list", updated 23 Dec); SIR hub /sir (draft 23-12-2025, final 21-02-2026); Form 9/10/11A claim lists under /uploads/sir-2026/list-claims/<date>/form{N}/ (10/20/25/26-01-2026). Staged: Form-10 (Form-7 objections) sample 10-01-2026 (3 pp, Irinjalakuda — documented deletion-objections) + final electorate summary (8 pp; doc header says "21-02-2025", likely typo for 2026; S11: 13,827,319 M / 13,126,048 F / 277 TG).
+- **Uttar Pradesh (S24):** draft roll 2026 parts on cdn.s3waas.gov.in (draft pub. 06-01-2026). Staged: AC 52 Baghpat last part (102 pp), AC 51 Baraut last part (120 pp) — service-elector parts.
+- **Maharashtra (S13):** CEO press note verified (full text): all 288 AC draft rolls pub. 31.08.2026; ASDDO lists posted on CEO/DEO websites; pre-SIR 9,78,54,049 → draft 7,71,65,562 (78.86%); dropped 2,06,88,487 (21.14%) with district annexures; claims/objections 31.08–30.09.2026; final 04.11.2026. Direct download failed from this VM (empty reply) — content verified via provider fetch only; a browser-capable agent could stage it.
+- **Tamil Nadu (S22):** draft 19-12-2025, final 07-02-2026; ASD lists on district sites (Kancheepuram FAQ verified); 641.1L→543.8L (97.4L, 15.2% dropped). File URLs not enumerated.
+- **Gujarat (S06):** draft 19-12-2025, final 07-02-2026; 4.34 cr validated, 73.73L deleted. ASD workflow: CEO site → district → AC → Google Drive folder of booth-wise PDFs. District index pages verified (Ahmedabad ACs 39–59, Morbi, Mahesana, Rajkot); Drive targets JS-gated.
+- **Madhya Pradesh (S12):** SIR order + daily bulletins (02-01-2026 bulletin: draft roll 5,31,31,983 electors; claims/objections 23.12.2025–22.01.2026). Download failed from this VM; verified via search text.
+- **Rajasthan (S20):** ASD 41,84,891 excluded from draft (29.6L shifted/absent, 8.75L deceased, 3.44L multiple); pre-SIR 5,46,56,215 → draft 5,04,71,324 (16-12-2025) → final 5,15,19,929 (21-02-2026). Exact ASD list URL unverified.
+- **Chhattisgarh (S26):** roll route CAPTCHA-gated — not bypassed.
+- Blocked: voters.eci.gov.in (CAPTCHA + HTTP 406 to this VM's IP); elections.tn.gov.in (CAPTCHA at PDF step per third-party guides); Kerala /asd-list + Gujarat ASD Drive links are JS-rendered (need live browser).
+
+### 8d. GitHub (stream 3/4) — 2 samples staged; no non-Karnataka open row-level deletion index exists
+Verified via API + 2 shallow clones (deleted after): MahmoodUlHassan/electoral-parser (Telangana SIR 2026 OCR parser, code only); in-rolls/parse_unsearchable_rolls (25-state parser suite, code only; parsed output on Harvard Dataverse, access unverifiable); mkhalid-s/sir-saathi (MH pipeline, no data by design); light-bringer/ecr-ocr-cli (WB OCR CLI, code only). **sharik19/India-Electoral-Rolls: UP SIR Deleted Voters Draft List — 177,422 parts × ~162 mean deleted/part ≈ 28.7M rows (estimated) — the only row-level non-Karnataka SIR deletion dataset found, but ACCESS-GATED (Google Form request, non-commercial, no-redistribution).** Staged: jaiharinataraj TN AC-level impact analysis (232 rows, ABSENT-BETWEEN-VERSIONS — net removed from roll totals, not documented deletions) + GKartheeban TN AC-level ASD aggregates (234 rows, DOCUMENTED DELETION aggregate; README cites no exact official source URL — verify vs CEO-TN before bulk ingest). Neither sample contains names or EPICs. Dead/empty: Pronojit2001/indian_electoral_rolls (empty), archii-afk/rollguard (synthetic demo), ashwiinnnn/SIR-India + s1dd4rth/tamilnadu-elections-2026 (aggregate-only).
+
+### 8e. Bihar + news orgs (stream 4/4) — gap confirmed again, no new data
+Bihar: ceobihar.nic.in exposes only form-based lookup; bulk route is voters.eci.gov.in with per-part CAPTCHA (hard stop per no-bypass rule); SC-ordered 65L ASD lists were EPIC-keyed lookup only (no bulk archive found); GitHub API search returned zero relevant repos; Wayback CDX for Bihar unverified this turn (fetch tool failed; needs live browser). **No public name-level Bihar SIR data — documented gap holds.** News orgs: Alt News sir-data-decoded.altnews.in is WB-only (6 ACs, ~12.8L voters; already staged); Reporters' Collective Bihar series is article-only (14.35L suspect duplicates etc. — leads, not datasets); Newslaundry paywalled article-only.
+
+### 8f. Environmental notes
+- `/tmp` is a 512M tmpfs that hit 100% during one clone; large clones should go to `~/workspace` scratch, not /tmp. Another stream's `/tmp/sirwatch_raw` (190M) was left in place — do not delete without checking with the parent.
+- Mid-task, `data/raw/` briefly vanished from the workspace (parent's push-time move-aside); one stream restored from `/tmp/sirwatch_raw`. Post-task verification: all 50 sidecars match, no duplicates, manifest paths correct.
+
+### 8g. Ranked next targets (supersede §7)
+1. **Kerala CEO claim/objection lists bulk harvest** — static CAPTCHA-free PDFs at ceo.kerala.gov.in/uploads/sir-2026/list-claims/<date>/form{N}/ ; ASD index at /asd-list (JS-rendered — needs live browser to enumerate).
+2. **Jharkhand S27 OLDSIRROLL bulk harvest** — 490 pre-SIR part PDFs via the CDX index query (stream 1/4 report); gives the "before" side for 2 ACs.
+3. **UP draft-roll 2026 bulk** — cdn.s3waas.gov.in parts (index enumeration needed).
+4. **File the sharik19 UP Deleted Voters access request** (user decision; non-commercial, no-redistribution terms).
+5. **Verify GKartheeban TN ASD aggregates against CEO-TN official ASD lists** before any bulk ingest.
+6. **Browser-capable follow-ups:** enumerate Maharashtra ASDDO lists on CEO/DEO sites; Gujarat district ASD Drive folders; Kerala /asd-list links; stage MH press note + MP bulletin PDFs (direct download fails from this VM).
+7. **Bihar Wayback CDX** (ceobihar.nic.in* roll PDFs) via live browser.

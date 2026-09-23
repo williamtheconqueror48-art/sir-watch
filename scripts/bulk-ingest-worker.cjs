@@ -80,7 +80,8 @@ async function main() {
         epic_masked: null,
         deletion_reason: t[4] ? "Notice: " + t[4] : null,
         phase: "Phase 3",
-        source_url: GH_ASD + "docs/data-notices/roll/" + relPath,
+        // t[8] is the source PDF's Google Drive file id (per the app's own noticesPdfUrl)
+        source_url: t[8] ? "https://drive.google.com/file/d/" + t[8] + "/view" : GH_ASD + "docs/data-notices/roll/" + relPath,
       };
     };
   } else if (dataset === "asddo") {
