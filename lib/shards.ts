@@ -261,7 +261,11 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
   if (!man) return [];
   const q = query.trim().toUpperCase();
   if (q.length < 2) return [];
-  const out: ShardRecord[] = [];
+  // Per-dataset quota: a shared global cap lets the multi-million-row
+  // Karnataka datasets drown out small ones (e.g. Kerala's 46-row Form-10
+  // list would never surface for common names). Collect per dataset, then
+  // interleave so every dataset with matches is represented.
+  const PER_DATASET = 50;
   const keys: ShardDatasetKey[] = [
     "ka-asd",
     "ka-notices",
@@ -272,15 +276,16 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
     "kl-form10",
     "kl-form11a",
   ];
-  await Promise.all(
+  const per: ShardRecord[][] = await Promise.all(
     keys.map(async (dk) => {
+      const hits: ShardRecord[] = [];
       const meta = man[dk];
-      if (!meta) return;
+      if (!meta) return hits;
       // Prefer the 3-char shard when the manifest carries one for this prefix.
       const k3 = normKey(q, 3);
       const k2 = normKey(q, 2);
       const entry = meta.shards[k3] ?? meta.shards[k2];
-      if (!entry) return;
+      if (!entry) return hits;
       // Oversize shards are split into sequential chunks; fetch them all.
       const files = entry.files ?? (entry.file ? [entry.file] : []);
       const parts = await Promise.all(files.map(fetchShardGz));
@@ -289,15 +294,22 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
         for (const row of shard.rows) {
           const rec = toRecord(dk, meta, meta.fields, row);
           if (rec.voter_name.toUpperCase().includes(q)) {
-            out.push(rec);
-            if (out.length >= limit) break;
+            hits.push(rec);
+            if (hits.length >= PER_DATASET) break;
           }
         }
-        if (out.length >= limit) break;
+        if (hits.length >= PER_DATASET) break;
       }
+      return hits;
     })
   );
-  return out.slice(0, limit);
+  const out: ShardRecord[] = [];
+  for (let i = 0; i < PER_DATASET && out.length < limit; i++) {
+    for (const hits of per) {
+      if (i < hits.length && out.length < limit) out.push(hits[i]);
+    }
+  }
+  return out;
 }
 
 export function shardProvenanceNote(man: ShardManifest | null): string | null {
