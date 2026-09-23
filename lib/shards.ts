@@ -80,7 +80,10 @@ export async function getShardManifest(): Promise<ShardManifest | null> {
   if (manifestCache) return manifestCache;
   if (manifestFailed) return null;
   try {
-    const res = await fetch(`${SHARD_BASE}/manifest.json`, { cache: "force-cache" });
+    // no-cache (not force-cache): the manifest is re-issued on every data
+    // push, so returning visitors must revalidate instead of serving a
+    // week-stale copy. jsDelivr answers 304 when unchanged, so this is cheap.
+    const res = await fetch(`${SHARD_BASE}/manifest.json`, { cache: "no-cache" });
     if (!res.ok) throw new Error(`manifest ${res.status}`);
     manifestCache = (await res.json()) as ShardManifest;
     return manifestCache;
