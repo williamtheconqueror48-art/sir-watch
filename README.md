@@ -4,6 +4,8 @@
 
 Live: https://sir-watch.vercel.app
 
+![SIR-WATCH dashboard — working screenshot](docs/screenshot.png)
+
 ## What it does
 
 - **Dashboard** — state × phase figures (pre-SIR roll, post-SIR roll, deletions, deletion %, notices issued), one row per *source*. ECI press-note figures and opposition/analyst claims sit side by side and are never merged.
