@@ -1,42 +1,16 @@
 "use client";
 
 /**
- * SIR-WATCH dashboard — state x phase figures per source, phase cards,
- * and the honesty contract: competing claims are shown side by side,
- * never merged.
+ * SIR-WATCH dashboard — what the archive actually holds.
+ *
+ * Every number on this page is read live from the published shard manifest
+ * (or labeled with its ledger batch). Nothing here is estimated, averaged,
+ * or carried over from press claims. See /methodology for the rules and
+ * /deletions for the name search itself.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-
-type Snapshot = {
-  id: number;
-  state: string;
-  phase: string;
-  pre_sir_electors: string | null;
-  post_sir_electors: string | null;
-  deletions: string | null;
-  deletion_pct: string | null;
-  notices_issued: string | null;
-  source_name: string;
-  source_url: string;
-  ledger_id: number;
-  retrieved_at: string;
-  sha256: string;
-};
-
-type Phase = {
-  id: number;
-  phase: string;
-  announced_date: string | null;
-  enumeration_start: string | null;
-  enumeration_end: string | null;
-  coverage: string;
-  electorate_covered_cr: string | null;
-  source_name: string;
-  source_url: string;
-  ledger_id: number;
-  retrieved_at: string;
-};
+import { getShardManifest } from "../lib/shards";
 
 const NAV = [
   { href: "/", label: "DASHBOARD" },
@@ -72,221 +46,255 @@ export function SiteHeader({ active }: { active: string }) {
   );
 }
 
-function fmt(n: string | null): string {
-  if (n === null || n === undefined) return "—";
-  const v = Number(n);
-  if (Number.isNaN(v)) return n;
-  return v.toLocaleString("en-IN");
-}
+const inr = (n: number) => n.toLocaleString("en-IN");
 
-function fmtDate(d: string | null | undefined): string {
-  if (!d) return "—";
-  return d.slice(0, 10); // YYYY-MM-DD — never raw timestamps on screen
-}
+/** West Bengal adjudication records live in Neon (ledger batch #11). */
+const WB_ROWS = 39604;
+const WB_LABEL = "Neon ledger batch #11 · retrieved 2026-09-23";
+
+type DatasetCard = {
+  key: string;
+  title: string;
+  state: string;
+  what: string;
+  claimNote: string;
+  source: string;
+};
+
+const CARD_META: DatasetCard[] = [
+  {
+    key: "ka-asd",
+    title: "Karnataka ASD index",
+    state: "Karnataka",
+    what: "Absent / Shifted / Dead electors compiled from the draft electoral roll.",
+    claimNote:
+      "Community parser over ECI draft-roll PDFs. EPICs were hashed at the source and are not stored here. Overlaps substantially with the ASDDO dashboard below — counts are source rows, not unique voters.",
+    source: "gouthamganeshm/Karnataka_Draft_Roll_2026 · retrieved 2026-09-23",
+  },
+  {
+    key: "ka-asddo",
+    title: "CEO Karnataka ASDDO dashboard (community mirror)",
+    state: "Karnataka",
+    what: "Mirror of the CEO Karnataka ASD-deletion dashboard data.",
+    claimNote:
+      "EPICs masked at the source (ABC****XYZ). Overlaps substantially with the ASD index above — counts are source rows, not unique voters.",
+    source: "omshivaprakash/karnataka-asddo-dashboard · retrieved 2026-09-23",
+  },
+  {
+    key: "ka-notices",
+    title: "Karnataka SIR discrepancy notices",
+    state: "Karnataka",
+    what: "Discrepancy / no-mapping notices compiled from district election office PDFs.",
+    claimNote: "Notices are NOT deletions. A notice means the record was flagged, not removed.",
+    source: "gouthamganeshm/Karnataka_Draft_Roll_2026 · retrieved 2026-09-23",
+  },
+  {
+    key: "up-draftroll",
+    title: "UP draft roll 2026 — service electors",
+    state: "Uttar Pradesh",
+    what: "Service-elector entries from the 'Last Part' of the draft roll, 4 Assembly Constituencies (Baraut, Baghpat, Muhammadabad-Gohna, Mau).",
+    claimNote:
+      "Full draft-roll entries — NOT deletions. The source PDFs carry no EPIC field at all.",
+    source: "CEO Uttar Pradesh / district NIC sites via cdn.s3waas.gov.in · retrieved 2026-09-23",
+  },
+];
+
+const COVERAGE: [string, string, string][] = [
+  ["Karnataka", "LIVE", "ASD index, discrepancy notices, ASDDO dashboard"],
+  ["West Bengal", "LIVE", "Adjudication records — Bhabanipur + Ballygunge ACs, Kolkata"],
+  ["Uttar Pradesh", "LIVE", "Service-elector draft entries, 4 ACs (not deletions)"],
+  ["Kerala", "IN AUDIT", "7,590 claims/objections rows staged"],
+  ["Chhattisgarh", "IN AUDIT", "3,729 objection rows staged"],
+  ["Mizoram", "IN AUDIT", "6 rows + documents staged"],
+  ["Puducherry", "IN AUDIT", "9 rows (5 deletions + 4 additions) staged"],
+  ["Bihar", "STAGED — UNAUDITED", "3 community datasets, ~595 MB"],
+  ["Tamil Nadu", "AGGREGATES ONLY", "Cited ASD workbook ruled unusable; portal is CAPTCHA-gated"],
+  ["Gujarat", "URL INDEX ONLY", "50,963-part fetch manifest; PDFs need India egress"],
+  ["Rajasthan", "AGGREGATES ONLY", "Official totals only, no name-level data"],
+  ["Madhya Pradesh", "AGGREGATES ONLY", "Official totals only, no name-level data"],
+  ["Delhi", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
+  ["Punjab", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
+  ["Haryana", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
+  ["Telangana", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
+  ["Andhra Pradesh", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
+  ["Himachal Pradesh", "NO SIR", "Deferred by ECI"],
+  ["Jammu & Kashmir", "NO SIR", "Deferred by ECI"],
+  ["Ladakh", "NO SIR", "Deferred by ECI"],
+  ["Assam", "NO SIR", "Special Revision instead of SIR"],
+  ["Goa", "HUNTED", "No public bulk name-level data found; browser leads queued"],
+  ["Chandigarh", "HUNTED", "No public bulk name-level data found; browser leads queued"],
+  ["Dadra & Nagar Haveli and Daman & Diu", "HUNTED", "No public bulk name-level data found; browser leads queued"],
+  ["Uttarakhand", "HUNTED", "No public bulk name-level data found; browser leads queued"],
+  ["Sikkim", "HUNTED", "No public bulk name-level data found; browser leads queued"],
+  ["Meghalaya", "HUNTED", "Official ASD aggregate only (1,80,402); name lists need browser"],
+  ["Nagaland", "HUNTED", "Booth-wise lists reportedly public now; browser lead queued"],
+  ["Arunachal Pradesh", "HUNTED", "Baseline sample only; ASD portal needs browser"],
+  ["Tripura", "HUNTED", "Draft rolls expected ~14 Oct 2026"],
+  ["Manipur", "HUNTED", "Baseline claim rows only"],
+  ["Odisha", "HUNTED", "2002-baseline pilot only"],
+  ["Andaman & Nicobar Islands", "HUNTED", "Service-roll entries only; draft/ASD lists need browser"],
+  ["Lakshadweep", "HUNTED", "Official PDFs only (island-wise ASD table)"],
+];
 
 export default function HomeClient() {
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
-  const [sources, setSources] = useState<string[]>([]);
-  const [phases, setPhases] = useState<Phase[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState<string | null>(null);
-  const [stateFilter, setStateFilter] = useState("");
-  const [sourceFilter, setSourceFilter] = useState("");
+  const [manifest, setManifest] = useState<{
+    rows: Record<string, number>;
+    built_at: string;
+  } | null>(null);
+  const [manifestError, setManifestError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      try {
-        const [sRes, pRes] = await Promise.all([
-          fetch("/api/snapshots"),
-          fetch("/api/phases"),
-        ]);
-        if (!sRes.ok || !pRes.ok) throw new Error("API unreachable");
-        const sData = await sRes.json();
-        const pData = await pRes.json();
-        if (!cancelled) {
-          setSnapshots(sData.snapshots ?? []);
-          setSources(sData.sources ?? []);
-          setPhases(pData.phases ?? []);
-        }
-      } catch (err) {
-        if (!cancelled) setApiError((err as Error).message);
-      } finally {
-        if (!cancelled) setLoading(false);
+      const man = await getShardManifest();
+      if (cancelled) return;
+      if (!man) {
+        setManifestError(true);
+        return;
       }
+      const rows: Record<string, number> = {};
+      for (const k of ["ka-asd", "ka-asddo", "ka-notices", "up-draftroll"]) {
+        const d = man[k] as { rows?: number } | undefined;
+        if (d && typeof d.rows === "number") rows[k] = d.rows;
+      }
+      setManifest({ rows, built_at: String(man.built_at ?? "NOT AVAILABLE IN SOURCE DATA") });
     })();
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const filtered = useMemo(
-    () =>
-      snapshots.filter(
-        (s) =>
-          (!stateFilter ||
-            s.state.toLowerCase().includes(stateFilter.toLowerCase())) &&
-          (!sourceFilter || s.source_name === sourceFilter)
-      ),
-    [snapshots, stateFilter, sourceFilter]
-  );
-
-  const eciTotal = useMemo(() => {
-    let d = 0;
-    for (const s of snapshots) {
-      if (/election commission|eci/i.test(s.source_name) && s.deletions) {
-        d += Number(s.deletions);
-      }
-    }
-    return d;
-  }, [snapshots]);
+  const shardTotal = manifest
+    ? Object.values(manifest.rows).reduce((a, b) => a + b, 0)
+    : null;
+  const grandTotal = shardTotal === null ? null : shardTotal + WB_ROWS;
 
   return (
     <>
       <SiteHeader active="/" />
       <main className="bl-main">
         <p className="bl-p">
-          SIR-WATCH structures the public record of the Election Commission of
-          India&apos;s Special Intensive Revision (SIR) of electoral rolls —
-          state-by-state figures, the on-record objections of Election
-          Commissioners, the notice archive, and the Supreme Court case —
-          in one queryable place.
+          SIR-WATCH is a name-searchable public archive of SIR-affected
+          electoral-roll records. This page shows exactly what the archive
+          holds today — every number below is read live from the published
+          data manifest, or labeled with its ledger batch. Where the hunt
+          found nothing, that is stated too.
         </p>
         <p className="bl-p bl-dim bl-small">
-          Descriptive facts only. Where sources disagree on a number, both
-          figures are shown side by side with their sources — never averaged,
-          never merged. See{" "}
-          <Link href="/methodology">METHODOLOGY</Link> for the rules.
+          <Link href="/deletions">NAME SEARCH</Link> ·{" "}
+          <Link href="/methodology">METHODOLOGY</Link>
         </p>
 
-        {apiError && (
+        {manifestError && (
           <div className="bl-empty" style={{ marginBottom: 16 }}>
-            DATA SOURCE OFFLINE — {apiError}. Showing empty states; no data is
-            invented in its place.
+            DATA MANIFEST OFFLINE — holdings cannot be counted right now. No
+            numbers are shown in its place.
           </div>
         )}
 
+        <section className="bl-panel" style={{ marginTop: 24 }}>
+          <div className="bl-panel-head">
+            <span>THE ARCHIVE TODAY</span>
+            <span className="bl-dim">
+              {manifest ? `MANIFEST BUILT ${manifest.built_at}` : "READING MANIFEST…"}
+            </span>
+          </div>
+          <div className="bl-panel-body">
+            <p className="bl-p" style={{ fontSize: "1.6em", margin: "8px 0" }}>
+              {grandTotal === null ? "…" : inr(grandTotal)}{" "}
+              <span className="bl-dim bl-small">name-level rows searchable</span>
+            </p>
+            <p className="bl-p bl-dim bl-small">
+              {shardTotal === null ? "…" : inr(shardTotal)} static-archive rows
+              (Karnataka + Uttar Pradesh) + {inr(WB_ROWS)} West Bengal
+              adjudication records ({WB_LABEL}).
+            </p>
+            <p className="bl-p bl-dim bl-small">
+              COUNTING RULE: Karnataka&apos;s ASD index and ASDDO dashboard
+              overlap substantially — the total counts source rows, not unique
+              voters. UP service-elector entries and WB adjudication records
+              are not deletions; each row&apos;s dataset says what it is.
+            </p>
+          </div>
+        </section>
+
         <div className="bl-grid-2" style={{ marginTop: 24 }}>
-          {phases.map((p) => (
-            <section className="bl-panel" key={p.id} aria-label={p.phase}>
+          {CARD_META.map((c) => (
+            <section className="bl-panel" key={c.key} aria-label={c.title}>
               <div className="bl-panel-head">
-                <span>{p.phase.toUpperCase()}</span>
-                <span className="bl-dim">LEDGER #{p.ledger_id}</span>
+                <span>{c.title.toUpperCase()}</span>
+                <span className="bl-dim">{c.state.toUpperCase()}</span>
               </div>
               <div className="bl-panel-body">
-                <p className="bl-p">{p.coverage}</p>
-                <p className="bl-p bl-dim bl-small">
-                  ANNOUNCED: {fmtDate(p.announced_date)} · ENUMERATION:{" "}
-                  {fmtDate(p.enumeration_start)} → {fmtDate(p.enumeration_end)}
-                  {p.electorate_covered_cr
-                    ? ` · ELECTORATE: ${p.electorate_covered_cr} CRORE`
-                    : ""}
+                <p className="bl-p" style={{ fontSize: "1.3em", margin: "4px 0" }}>
+                  {manifest && manifest.rows[c.key] !== undefined
+                    ? inr(manifest.rows[c.key])
+                    : "…"}
+                  <span className="bl-dim bl-small"> rows</span>
                 </p>
-                <p className="bl-p bl-dim bl-small">
-                  SOURCE: {p.source_name} ·{" "}
-                  <a href={p.source_url} target="_blank" rel="noreferrer">
-                    OPEN
-                  </a>{" "}
-                  · RETRIEVED {p.retrieved_at?.slice(0, 10)}
-                </p>
+                <p className="bl-p">{c.what}</p>
+                <p className="bl-p bl-dim bl-small">{c.claimNote}</p>
+                <p className="bl-p bl-dim bl-small">SOURCE: {c.source}</p>
               </div>
             </section>
           ))}
+          <section className="bl-panel" aria-label="West Bengal adjudication records">
+            <div className="bl-panel-head">
+              <span>WEST BENGAL ADJUDICATION RECORDS</span>
+              <span className="bl-dim">WEST BENGAL</span>
+            </div>
+            <div className="bl-panel-body">
+              <p className="bl-p" style={{ fontSize: "1.3em", margin: "4px 0" }}>
+                {inr(WB_ROWS)}
+                <span className="bl-dim bl-small"> rows</span>
+              </p>
+              <p className="bl-p">
+                Records under adjudication from Bhabanipur (AC-159) and
+                Ballygunge (AC-161), Kolkata — SIR final roll revision 1.
+              </p>
+              <p className="bl-p bl-dim bl-small">
+                The source states no decision. These are under adjudication —
+                NOT deletions. EPICs masked at parse time.
+              </p>
+              <p className="bl-p bl-dim bl-small">
+                SOURCE: Alt News SIR Data Decoded · {WB_LABEL}
+              </p>
+            </div>
+          </section>
         </div>
 
         <section className="bl-panel" style={{ marginTop: 24 }}>
           <div className="bl-panel-head">
-            <span>STATE × PHASE FIGURES — PER SOURCE</span>
-            <span className="bl-dim">
-              {eciTotal > 0
-                ? `ECI-SOURCED DELETIONS ON RECORD: ${eciTotal.toLocaleString("en-IN")}`
-                : `${filtered.length} ROWS`}
-            </span>
+            <span>COVERAGE — STATE BY STATE</span>
+            <span className="bl-dim">AS OF 2026-09-23</span>
           </div>
           <div className="bl-panel-body">
-            <div
-              style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}
-            >
-              <input
-                className="bl-input"
-                placeholder="Filter state…"
-                value={stateFilter}
-                onChange={(e) => setStateFilter(e.target.value)}
-                aria-label="Filter by state"
-              />
-              <select
-                className="bl-input"
-                value={sourceFilter}
-                onChange={(e) => setSourceFilter(e.target.value)}
-                aria-label="Filter by source"
-              >
-                <option value="">All sources</option>
-                {sources.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {loading ? (
-              <p className="bl-dim">LOADING…</p>
-            ) : filtered.length === 0 ? (
-              <div className="bl-empty">
-                NO ROWS. Either the filters exclude everything or no snapshot
-                batches have been ingested yet — check /api/ledger.
-              </div>
-            ) : (
-              <div style={{ overflowX: "auto" }}>
-                <table className="bl-table">
-                  <thead>
-                    <tr>
-                      <th>STATE</th>
-                      <th>PHASE</th>
-                      <th>PRE-SIR</th>
-                      <th>POST-SIR</th>
-                      <th>DELETIONS</th>
-                      <th>DEL %</th>
-                      <th>NOTICES</th>
-                      <th>SOURCE</th>
-                      <th>LEDGER</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((s) => (
-                      <tr key={s.id}>
-                        <td>{s.state}</td>
-                        <td>{s.phase}</td>
-                        <td>{fmt(s.pre_sir_electors)}</td>
-                        <td>{fmt(s.post_sir_electors)}</td>
-                        <td>{fmt(s.deletions)}</td>
-                        <td>
-                          {s.deletion_pct !== null
-                            ? `${Number(s.deletion_pct).toFixed(1)}%`
-                            : "—"}
-                        </td>
-                        <td>{fmt(s.notices_issued)}</td>
-                        <td>
-                          <a
-                            href={s.source_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            title={`Retrieved ${s.retrieved_at?.slice(0, 10)} · SHA-256 ${s.sha256?.slice(0, 12)}…`}
-                          >
-                            {s.source_name}
-                          </a>
-                        </td>
-                        <td>#{s.ledger_id}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            <p className="bl-p bl-dim bl-small" style={{ marginTop: 12 }}>
-              COMPETING-CLAIMS RULE: rows from different sources describing the
-              same state and phase are displayed as separate rows. No figure
-              here is an average or a reconciliation of sources.
+            <p className="bl-p bl-dim bl-small" style={{ marginBottom: 12 }}>
+              LIVE = searchable now. IN AUDIT = staged, being verified before
+              publication. HUNTED = the all-states hunt found no public
+              bulk name-level SIR data. Only verified SIR-affected records are
+              published — never full rolls, never estimates.
             </p>
+            <div style={{ overflowX: "auto" }}>
+              <table className="bl-table">
+                <thead>
+                  <tr>
+                    <th>STATE / UT</th>
+                    <th>STATUS</th>
+                    <th>NOTE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COVERAGE.map(([state, status, note]) => (
+                    <tr key={state}>
+                      <td>{state}</td>
+                      <td>{status}</td>
+                      <td className="bl-dim">{note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
