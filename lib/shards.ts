@@ -7,7 +7,7 @@
  * and SHARDS.md.
  */
 
-export type ShardDatasetKey = "ka-asd" | "ka-notices" | "ka-asddo";
+export type ShardDatasetKey = "ka-asd" | "ka-notices" | "ka-asddo" | "up-draftroll";
 
 type ShardManifest = {
   v: number;
@@ -16,6 +16,7 @@ type ShardManifest = {
   "ka-asd"?: DatasetMeta;
   "ka-notices"?: DatasetMeta;
   "ka-asddo"?: DatasetMeta;
+  "up-draftroll"?: DatasetMeta;
 };
 
 type ShardEntry = {
@@ -105,6 +106,8 @@ const DATASET_LABEL: Record<ShardDatasetKey, string> = {
   "ka-asd": "Karnataka draft-roll ASD index (Absent/Shifted/Dead — community parser project)",
   "ka-notices": "Karnataka SIR discrepancy notices (district election offices)",
   "ka-asddo": "Karnataka CEO ASDDO dashboard (community mirror)",
+  "up-draftroll":
+    "Uttar Pradesh draft-roll service-electors entries (full roll — NOT a deletion; CEO UP / district NIC)",
 };
 
 function toRecord(ds: ShardDatasetKey, fields: string[], row: unknown[]): ShardRecord {
@@ -115,6 +118,7 @@ function toRecord(ds: ShardDatasetKey, fields: string[], row: unknown[]): ShardR
   };
   let reason: string | null = null;
   let source_url = "NOT AVAILABLE IN SOURCE DATA";
+  let state = "Karnataka";
   if (ds === "ka-asd") {
     reason = g("reason_code");
     const b = g("src_bucket");
@@ -123,15 +127,20 @@ function toRecord(ds: ShardDatasetKey, fields: string[], row: unknown[]): ShardR
     const rt = g("reason_text");
     reason = rt ? `Notice issued — ${rt}` : "Notice issued (reason not stated)";
     source_url = driveUrl(g("drive_file_id"));
-  } else {
+  } else if (ds === "ka-asddo") {
     reason = g("reason");
     source_url = driveUrl(g("drive_file_id"));
+  } else {
+    // up-draftroll: full draft-roll service-elector entries, not deletions.
+    state = "Uttar Pradesh";
+    reason = g("claim_type");
+    source_url = g("src_url") ?? source_url;
   }
   return {
     dataset: ds,
     voter_name: (g("name") ?? "") as string,
     epic_masked: g("epic_masked"),
-    state: "Karnataka",
+    state,
     district: g("district"),
     ac_name: g("ac_name"),
     booth_no: g("part"),
@@ -155,7 +164,7 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
   const q = query.trim().toUpperCase();
   if (q.length < 2) return [];
   const out: ShardRecord[] = [];
-  const keys: ShardDatasetKey[] = ["ka-asd", "ka-notices", "ka-asddo"];
+  const keys: ShardDatasetKey[] = ["ka-asd", "ka-notices", "ka-asddo", "up-draftroll"];
   await Promise.all(
     keys.map(async (dk) => {
       const meta = man[dk];

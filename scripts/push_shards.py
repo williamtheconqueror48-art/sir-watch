@@ -92,11 +92,17 @@ def main():
     state = {}
     if os.path.exists(STATE_FILE):
         state = json.load(open(STATE_FILE))
+        # manifest.json changes whenever datasets merge; always re-upload it
+        state.pop("manifest.json", None)
         print(f"resuming: {len(state)} blobs already uploaded")
 
-    ref = api("GET", f"/repos/{OWNER}/{REPO}/git/refs/heads/main")
-    base_sha = ref["object"]["sha"]
-    base_tree = api("GET", f"/repos/{OWNER}/{REPO}/git/commits/{base_sha}")["tree"]["sha"]
+    def base():
+        ref = api("GET", f"/repos/{OWNER}/{REPO}/git/refs/heads/main")
+        sha = ref["object"]["sha"]
+        tree = api("GET", f"/repos/{OWNER}/{REPO}/git/commits/{sha}")["tree"]["sha"]
+        return sha, tree
+
+    base_sha, base_tree = base()
     print("base:", base_sha[:8])
 
     done = 0
@@ -114,6 +120,12 @@ def main():
             print(f"  blobs {i + 1}/{len(files)}", flush=True)
     json.dump(state, open(STATE_FILE, "w"))
     print(f"all {len(files)} blobs uploaded")
+
+    # Re-fetch base at the end: other commits may have landed while blobs
+    # uploaded. Rebuilding the tree on the fresh base keeps this a
+    # fast-forward instead of a 422.
+    base_sha, base_tree = base()
+    print("re-based:", base_sha[:8])
 
     tree_entries = [{"path": f"data/shards/{rel}", "mode": "100644",
                      "type": "blob", "sha": state[rel]} for rel, _ in files]
