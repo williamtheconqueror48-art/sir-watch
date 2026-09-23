@@ -68,10 +68,12 @@ export default function MethodologyPage() {
           Deletion records are reproduced exactly as published in the
           source rolls and deletion lists: voter name, district, assembly
           constituency, booth, and the reason stated by the source. EPIC
-          (voter ID) numbers are never stored or displayed. Absence of a
-          name from this search proves nothing — coverage reflects only
-          which rolls have been recovered and parsed so far, and the
-          coverage statement on the search page says so plainly.
+          (voter ID) numbers appear only in masked (“starred”) form, e.g.
+          ABC****123 — full EPICs are never stored or displayed. Where a
+          source provides no EPIC at all, the field reads NOT IN SOURCE
+          DATA. Absence of a name from this search proves nothing — coverage
+          reflects only which rolls have been recovered and parsed so far, and
+          the coverage statement on the search page says so plainly.
         </p>
 
         <h2>7. CONSTITUTIONAL CONTEXT</h2>

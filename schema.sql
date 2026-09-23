@@ -81,7 +81,8 @@ CREATE TABLE IF NOT EXISTS sc_events (
 
 -- Name-level deletion records recovered from published rolls / deletion
 -- lists. Presented exactly as published in the source. EPIC numbers are
--- never displayed.
+-- stored and displayed only in masked ("starred") form, e.g. ABC****123;
+-- full EPICs are never stored or displayed.
 CREATE TABLE IF NOT EXISTS deletion_records (
   id SERIAL PRIMARY KEY,
   state TEXT NOT NULL,
@@ -90,6 +91,7 @@ CREATE TABLE IF NOT EXISTS deletion_records (
   booth_no TEXT,
   booth_name TEXT,
   voter_name TEXT NOT NULL,
+  epic_masked TEXT,
   deletion_reason TEXT,
   phase TEXT,
   source_url TEXT NOT NULL,

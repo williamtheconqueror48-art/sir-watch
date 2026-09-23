@@ -1,7 +1,4 @@
 /* SIR-WATCH — brutalist stylesheet. */
-   Black background. White monospace text. 1px hairline borders.
-   No rounded corners. No gradients. No shadows. No illustrations.
-   The data is the decoration. */
 
 :root {
   --bg: #000000;

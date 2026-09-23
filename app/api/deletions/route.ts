@@ -1,7 +1,7 @@
 /**
  * GET /api/deletions — name-level deletion records recovered from published
  * rolls / deletion lists. ?q= searches voter name; ?state= filters state.
- * EPIC numbers are never stored or displayed.
+ * EPIC numbers appear only in masked (starred) form; full EPICs are never stored or displayed.
  */
 import { getSql, dbErrorResponse } from "@/lib/db";
 
@@ -35,7 +35,7 @@ export async function GET(req: Request) {
     );
     const rows = await sql.query(
       `SELECT r.id, r.state, r.district, r.ac_name, r.booth_no, r.booth_name,
-              r.voter_name, r.deletion_reason, r.phase,
+              r.voter_name, r.epic_masked, r.deletion_reason, r.phase,
               r.source_url, r.ledger_id, l.retrieved_at
        FROM deletion_records r
        JOIN ingestion_ledger l ON l.id = r.ledger_id

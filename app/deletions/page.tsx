@@ -17,6 +17,7 @@ type Record = {
   booth_no: string | null;
   booth_name: string | null;
   voter_name: string;
+  epic_masked: string | null;
   deletion_reason: string | null;
   phase: string | null;
   source_url: string;
@@ -135,6 +136,7 @@ export default function DeletionsPage() {
                 <thead>
                   <tr>
                     <th>VOTER NAME</th>
+                    <th>EPIC</th>
                     <th>STATE</th>
                     <th>DISTRICT</th>
                     <th>ASSEMBLY SEAT</th>
@@ -148,6 +150,7 @@ export default function DeletionsPage() {
                   {records.map((r) => (
                     <tr key={r.id}>
                       <td>{r.voter_name}</td>
+                      <td>{r.epic_masked ?? "NOT IN SOURCE DATA"}</td>
                       <td>{r.state}</td>
                       <td>{r.district ?? "—"}</td>
                       <td>{r.ac_name ?? "—"}</td>
