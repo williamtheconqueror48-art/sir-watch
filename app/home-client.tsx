@@ -432,6 +432,10 @@ export default function HomeClient() {
         (manifest.rows["kerala-service-2017"] ?? 0) +
         (manifest.rows["uttarakhand-service-2026"] ?? 0)
       : null;
+  const staticArchive =
+    shardTotal === null || newHoldings === null
+      ? null
+      : shardTotal - newHoldings;
   const grandTotal = shardTotal === null ? null : shardTotal + WB_ROWS;
 
   return (
@@ -470,9 +474,9 @@ export default function HomeClient() {
               <span className="bl-dim bl-small">name-level rows searchable</span>
             </p>
             <p className="bl-p bl-dim bl-small">
-              {shardTotal === null ? "…" : inr(shardTotal)} static-archive rows
-              (Karnataka + Uttar Pradesh + Chhattisgarh + Kerala SIR-affected
-              indexes, claims &amp; objections) +{" "}
+              {staticArchive === null ? "…" : inr(staticArchive)} static-archive
+              rows (Karnataka + Uttar Pradesh + Chhattisgarh + Kerala
+              SIR-affected indexes, claims &amp; objections) +{" "}
               {newHoldings === null ? "…" : inr(newHoldings)} parsed-roll rows
               (pre/post-SIR rolls + service-elector rolls) + {inr(WB_ROWS)}{" "}
               West Bengal adjudication records ({WB_LABEL}).
