@@ -24,6 +24,7 @@ type Row = {
   file_url: string;
   format: string | null;
   scriptable: string;
+  fetched?: string | null;
   live_status: string | null;
   live_http_status: string | null;
   live_content_type: string | null;
@@ -50,6 +51,7 @@ export default function InventoryPage() {
   const [state, setState] = useState("");
   const [rtype, setRtype] = useState("");
   const [scriptable, setScriptable] = useState("");
+  const [fetched, setFetched] = useState("");
   const [q, setQ] = useState("");
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function InventoryPage() {
       if (state && r.state !== state) return false;
       if (rtype && r.record_type !== rtype) return false;
       if (scriptable && r.scriptable !== scriptable) return false;
+      if (fetched && (r.fetched ?? "") !== fetched) return false;
       if (needle) {
         const hay =
           `${r.district ?? ""} ${r.ac_name ?? ""} ${r.ac_number ?? ""} ` +
@@ -86,9 +89,19 @@ export default function InventoryPage() {
       }
       return true;
     });
-  }, [rows, state, rtype, scriptable, q]);
+  }, [rows, state, rtype, scriptable, fetched, q]);
 
   const liveCount = rows.filter((r) => r.live_status === "verified_live").length;
+  const hasFetchedField = rows.some((r) => "fetched" in r);
+  const fetchedCount = rows.filter((r) => r.fetched === "Y").length;
+
+  function fetchedCell(r: Row) {
+    if (!("fetched" in r) || r.fetched == null)
+      return <span className="bl-dim">—</span>;
+    if (r.fetched === "Y") return <span className="bl-green">Y</span>;
+    if (r.fetched === "N") return <span className="bl-amber">N</span>;
+    return <span className="bl-dim">{r.fetched}</span>;
+  }
 
   return (
     <main className="bl-page">
@@ -109,7 +122,10 @@ export default function InventoryPage() {
           are labelled as such and are <em>not</em> name-level electoral rolls.
           “Direct” means the URL was fetched or indexed from an official source with
           a plain GET; a live check was run on 2026-09-24 and dead links were
-          downgraded.
+          downgraded. The <strong>Fetched</strong> column marks which PDFs have
+          been pulled into the archive for parsing — <strong>Y</strong> means
+          fetched, <strong>N</strong> means not yet fetched, and <strong>—</strong>{" "}
+          means the fetch status has not been assessed yet.
         </div>
 
         {loading && <p>Loading inventory…</p>}
@@ -121,11 +137,26 @@ export default function InventoryPage() {
               <span><strong>{rows.length}</strong> file rows</span>
               <span><strong>{states.length}</strong> states/UTs with files</span>
               <span><strong>{liveCount}</strong> links verified live</span>
+              {hasFetchedField && (
+                <span><strong>{fetchedCount}</strong> PDFs fetched for parsing</span>
+              )}
               <span>
                 <strong>
                   {36 - new Set(rows.map((r) => r.state)).size - 0}
                 </strong>{" "}
                 states/UTs: no direct files (gated)
+              </span>
+            </div>
+
+            <div className="bl-legend" style={{ marginBottom: 8 }}>
+              <span>
+                <i className="bl-green" /> Y — PDF FETCHED INTO THE ARCHIVE FOR PARSING
+              </span>
+              <span>
+                <i className="bl-amber" /> N — NOT YET FETCHED
+              </span>
+              <span>
+                <i className="bl-dim" /> — — FETCH STATUS NOT YET ASSESSED
               </span>
             </div>
 
@@ -161,6 +192,17 @@ export default function InventoryPage() {
                   <option value="N">N — gated / dead</option>
                 </select>
               </label>
+              <label>
+                Fetched
+                <select
+                  value={fetched}
+                  onChange={(e) => setFetched(e.target.value)}
+                >
+                  <option value="">All</option>
+                  <option value="Y">Y — fetched</option>
+                  <option value="N">N — not yet fetched</option>
+                </select>
+              </label>
               <label className="bl-filter-search">
                 Search
                 <input
@@ -187,6 +229,7 @@ export default function InventoryPage() {
                     <th>File type</th>
                     <th>Direct</th>
                     <th>Live check</th>
+                    <th>Fetched</th>
                     <th>File</th>
                     <th>Updated</th>
                   </tr>
@@ -217,6 +260,7 @@ export default function InventoryPage() {
                             ? "gated"
                             : r.live_status ?? "—"}
                       </td>
+                      <td>{fetchedCell(r)}</td>
                       <td>
                         <a
                           href={r.file_url}

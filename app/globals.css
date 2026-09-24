@@ -21,8 +21,8 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
-    "Liberation Mono", monospace;
+  font-family: var(--font-body), system-ui, -apple-system, "Segoe UI",
+    sans-serif;
   font-size: 14px;
   line-height: 1.55;
   -webkit-font-smoothing: none;
@@ -72,6 +72,7 @@ a:hover {
 }
 
 .bl-wordmark {
+  font-family: var(--font-display), system-ui, sans-serif;
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -117,6 +118,7 @@ a:hover {
 .bl-panel-head {
   border-bottom: 1px solid var(--fg);
   padding: 8px 12px;
+  font-family: var(--font-display), system-ui, sans-serif;
   font-size: 12px;
   letter-spacing: 0.14em;
   font-weight: 700;
@@ -131,6 +133,7 @@ a:hover {
 
 /* ---- type ---- */
 .bl-h1 {
+  font-family: var(--font-display), system-ui, sans-serif;
   font-size: 15px;
   letter-spacing: 0.1em;
   font-weight: 700;
@@ -188,6 +191,14 @@ a:hover {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
+  font-family: var(--font-data), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, "Liberation Mono", monospace;
+}
+
+/* Numeric / data figures anywhere on the page */
+.bl-data {
+  font-family: var(--font-data), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, "Liberation Mono", monospace;
 }
 
 .bl-table th,
@@ -218,6 +229,7 @@ a:hover {
 
 /* ---- methodology ---- */
 .bl-method h2 {
+  font-family: var(--font-display), system-ui, sans-serif;
   font-size: 14px;
   letter-spacing: 0.12em;
   border-bottom: 1px solid var(--fg);
@@ -296,6 +308,8 @@ a:hover {
   display: flex; gap: 24px; flex-wrap: wrap;
   font-size: 12px; letter-spacing: 0.06em;
   margin: 0 0 12px;
+  font-family: var(--font-data), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
 }
 .bl-filters {
   display: flex; gap: 16px; flex-wrap: wrap; align-items: end;

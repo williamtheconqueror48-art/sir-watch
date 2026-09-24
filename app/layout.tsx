@@ -1,5 +1,28 @@
 import type { Metadata } from "next";
+import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+
+const display = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  fallback: ["system-ui", "sans-serif"],
+  display: "swap",
+});
+
+const bodyFont = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+  display: "swap",
+});
+
+const dataFont = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-data",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "SIR-WATCH — Special Intensive Revision Tracker",
@@ -36,7 +59,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${display.variable} ${bodyFont.variable} ${dataFont.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

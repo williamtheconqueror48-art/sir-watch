@@ -15,7 +15,8 @@ export type ShardDatasetKey =
   | "cg-form10"
   | "kl-form9"
   | "kl-form10"
-  | "kl-form11a";
+  | "kl-form11a"
+  | "inv-rolls";
 
 type ShardManifest = {
   v: number;
@@ -29,6 +30,10 @@ type ShardManifest = {
   "kl-form9"?: DatasetMeta;
   "kl-form10"?: DatasetMeta;
   "kl-form11a"?: DatasetMeta;
+  "inv-rolls"?: DatasetMeta & {
+    /** optional per-state parsed-row breakdown, keyed by state name */
+    per_state?: Record<string, number>;
+  };
 };
 
 type ShardEntry = {
@@ -68,6 +73,13 @@ export type ShardRecord = {
   deletion_reason: string | null;
   source_url: string;
   source_label: string;
+  /** inv-rolls (parsed electoral rolls) only — absent on other datasets */
+  relative_name?: string | null;
+  age?: string | null;
+  sex?: string | null;
+  vintage_label?: string | null;
+  vintage_class?: "pre_sir" | "post_sir" | "other" | null;
+  record_type?: string | null;
 };
 
 const SHARD_BASE =
@@ -133,6 +145,8 @@ const DATASET_LABEL: Record<ShardDatasetKey, string> = {
     "Kerala SIR deletion objections in Form 7 (Form-10 list — objections, NOT adjudicated deletions; CEO Kerala)",
   "kl-form11a":
     "Kerala SIR address-shift applications in Form 8 (Form-11A list — shifts within constituency; CEO Kerala)",
+  "inv-rolls":
+    "Parsed electoral rolls from CEO sites, vintage-labeled (pre-SIR / post-SIR). Claims & objections lists are labeled applications, not rolls.",
 };
 
 function fileUrl(meta: DatasetMeta, sourceFile: string | null): string {
@@ -228,6 +242,34 @@ function toRecord(
       source_url,
       source_label: DATASET_LABEL[ds],
     };
+  } else if (ds === "inv-rolls") {
+    // Parsed electoral-roll rows: vintage_class is pre_sir | post_sir | other.
+    // vintage_class=other rows are applications / claims & objections lists —
+    // never treated as roll presence. EPICs are stored masked only.
+    state = g("state") ?? "NOT AVAILABLE IN SOURCE DATA";
+    const vc = g("vintage_class");
+    const vintage_class: ShardRecord["vintage_class"] =
+      vc === "pre_sir" || vc === "post_sir" || vc === "other" ? vc : null;
+    source_url = g("source_url") ?? source_url;
+    return {
+      dataset: ds,
+      voter_name: (g("voter_name") ?? "") as string,
+      epic_masked: g("epic_masked"),
+      state,
+      district: g("district"),
+      ac_name: g("ac_name"),
+      booth_no: g("part_number"),
+      booth_name: null,
+      deletion_reason: null,
+      source_url,
+      source_label: DATASET_LABEL[ds],
+      relative_name: g("relative_name"),
+      age: g("age"),
+      sex: g("sex"),
+      vintage_label: g("vintage_label"),
+      vintage_class,
+      record_type: g("record_type"),
+    };
   } else {
     // up-draftroll: full draft-roll service-elector entries, not deletions.
     state = "Uttar Pradesh";
@@ -275,6 +317,7 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
     "kl-form9",
     "kl-form10",
     "kl-form11a",
+    "inv-rolls",
   ];
   const per: ShardRecord[][] = await Promise.all(
     keys.map(async (dk) => {

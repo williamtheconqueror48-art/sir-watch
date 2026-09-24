@@ -14,6 +14,7 @@ import { getShardManifest } from "../lib/shards";
 
 const NAV = [
   { href: "/", label: "DASHBOARD" },
+  { href: "/vote-check", label: "VOTE CHECK" },
   { href: "/timeline", label: "DISSENT TIMELINE" },
   { href: "/notices", label: "NOTICES" },
   { href: "/case", label: "SC CASE" },
@@ -52,6 +53,187 @@ const inr = (n: number) => n.toLocaleString("en-IN");
 /** West Bengal adjudication records live in Neon (ledger batch #11). */
 const WB_ROWS = 39604;
 const WB_LABEL = "Neon ledger batch #11 · retrieved 2026-09-23";
+
+type InvFileRow = {
+  state: string;
+  scriptable: string;
+  fetched?: string | null;
+  live_status?: string | null;
+};
+
+/**
+ * Roll-file inventory → parsed rolls panel (feeds /vote-check).
+ *
+ * Reads the published roll-file inventory (/inventory/inventory.json) and the
+ * inv-rolls shard-dataset manifest entry. Until the parse coordinator
+ * publishes inv-rolls, the parsed column honestly says so — no numbers are
+ * invented. The `fetched` column reads the per-file `fetched` field when the
+ * fetch-status rebuild lands; until then it shows "—" (not assessed).
+ */
+function RollHoldingsPanel() {
+  const [files, setFiles] = useState<InvFileRow[] | null>(null);
+  const [filesError, setFilesError] = useState(false);
+  const [parsed, setParsed] = useState<{
+    rows: number;
+    perState: Record<string, number> | null;
+  } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/inventory/inventory.json")
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((d: InvFileRow[]) => {
+        if (!cancelled) setFiles(d);
+      })
+      .catch(() => {
+        if (!cancelled) setFilesError(true);
+      });
+    getShardManifest().then((man) => {
+      if (cancelled || !man) return;
+      const meta = man["inv-rolls"] as
+        | { rows?: number; per_state?: Record<string, number> }
+        | undefined;
+      if (meta && typeof meta.rows === "number") {
+        setParsed({ rows: meta.rows, perState: meta.per_state ?? null });
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const perState = (() => {
+    if (!files) return null;
+    const m = new Map<
+      string,
+      { total: number; fetched: number; gated: number }
+    >();
+    for (const f of files) {
+      const e = m.get(f.state) ?? { total: 0, fetched: 0, gated: 0 };
+      e.total += 1;
+      if (f.fetched === "Y") e.fetched += 1;
+      if (f.scriptable === "N") e.gated += 1;
+      m.set(f.state, e);
+    }
+    return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  })();
+
+  const hasFetchedField = !!files && files.some((f) => "fetched" in f);
+  const statesCovered = perState ? perState.length : null;
+
+  return (
+    <section className="bl-panel" style={{ marginTop: 24 }}>
+      <div className="bl-panel-head">
+        <span>ROLL INVENTORY → PARSED ROLLS (VOTE CHECK)</span>
+        <span className="bl-dim">
+          <Link href="/vote-check">VOTE CHECK</Link> ·{" "}
+          <Link href="/inventory">FULL INVENTORY</Link>
+        </span>
+      </div>
+      <div className="bl-panel-body">
+        <p className="bl-p bl-dim bl-small" style={{ marginBottom: 12 }}>
+          Which states&apos; electoral rolls have been fetched as PDFs, and how
+          many parsed roll rows are searchable on{" "}
+          <Link href="/vote-check">/vote-check</Link> per state. FETCHED =
+          PDFs pulled into the archive for parsing; GATED = files the official
+          site serves only behind a per-PDF CAPTCHA (documented, never
+          bypassed). States with no fetched PDFs say so plainly.
+        </p>
+        {filesError && (
+          <div className="bl-empty" style={{ marginBottom: 12 }}>
+            ROLL-FILE INVENTORY UNAVAILABLE RIGHT NOW — FETCH COUNTS CANNOT BE
+            SHOWN.
+          </div>
+        )}
+        {files && perState && (
+          <>
+            <p className="bl-p bl-small">
+              <span className="bl-data">{inr(files.length)}</span> ROLL FILES
+              INVENTORIED ·{" "}
+              <span className="bl-data">{inr(statesCovered ?? 0)}</span> OF 36
+              STATES/UTS WITH DIRECT FILES
+              {parsed ? (
+                <>
+                  {" "}·{" "}
+                  <span className="bl-data">{inr(parsed.rows)}</span> PARSED
+                  ROLL ROWS PUBLISHED
+                </>
+              ) : (
+                " · PARSED ROLLS: PARSING IN PROGRESS — NO PARSED ROWS PUBLISHED YET"
+              )}
+            </p>
+            <div style={{ overflowX: "auto" }}>
+              <table className="bl-table">
+                <thead>
+                  <tr>
+                    <th>STATE / UT</th>
+                    <th>ROLL PDFS</th>
+                    <th>FETCHED</th>
+                    <th>GATED</th>
+                    <th>PARSED ROWS</th>
+                    <th>VOTE CHECK</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {perState.map(([sname, e]) => {
+                    const pRows = parsed?.perState?.[sname];
+                    const searchable =
+                      typeof pRows === "number" && pRows > 0;
+                    return (
+                      <tr key={sname}>
+                        <td>{sname}</td>
+                        <td>{inr(e.total)}</td>
+                        <td>
+                          {hasFetchedField ? (
+                            e.fetched > 0 ? (
+                              inr(e.fetched)
+                            ) : (
+                              <span className="bl-amber">NOT YET FETCHED</span>
+                            )
+                          ) : (
+                            <span className="bl-dim">—</span>
+                          )}
+                        </td>
+                        <td>{e.gated > 0 ? inr(e.gated) : "—"}</td>
+                        <td>
+                          {typeof pRows === "number"
+                            ? inr(pRows)
+                            : parsed
+                              ? "state split not published"
+                              : "—"}
+                        </td>
+                        <td>
+                          {searchable ? (
+                            <span className="bl-green">SEARCHABLE</span>
+                          ) : (
+                            <span className="bl-dim">NOT YET</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="bl-p bl-dim bl-small" style={{ marginTop: 12 }}>
+              {36 - (statesCovered ?? 0)} of 36 states/UTs have no direct roll
+              files in the inventory — their rolls sit behind per-PDF CAPTCHAs
+              and are documented as coverage gaps, never bypassed. Fetch
+              status per file: <Link href="/inventory">/inventory</Link>
+              {" "}“Fetched” column.
+            </p>
+          </>
+        )}
+        {!files && !filesError && (
+          <p className="bl-dim bl-small">READING ROLL-FILE INVENTORY…</p>
+        )}
+      </div>
+    </section>
+  );
+}
 
 type DatasetCard = {
   key: string;
@@ -246,7 +428,7 @@ export default function HomeClient() {
             </span>
           </div>
           <div className="bl-panel-body">
-            <p className="bl-p" style={{ fontSize: "1.6em", margin: "8px 0" }}>
+            <p className="bl-p bl-data" style={{ fontSize: "1.6em", margin: "8px 0" }}>
               {grandTotal === null ? "…" : inr(grandTotal)}{" "}
               <span className="bl-dim bl-small">name-level rows searchable</span>
             </p>
@@ -272,7 +454,7 @@ export default function HomeClient() {
                 <span className="bl-dim">{c.state.toUpperCase()}</span>
               </div>
               <div className="bl-panel-body">
-                <p className="bl-p" style={{ fontSize: "1.3em", margin: "4px 0" }}>
+                <p className="bl-p bl-data" style={{ fontSize: "1.3em", margin: "4px 0" }}>
                   {manifest && manifest.rows[c.key] !== undefined
                     ? inr(manifest.rows[c.key])
                     : "…"}
@@ -290,7 +472,7 @@ export default function HomeClient() {
               <span className="bl-dim">WEST BENGAL</span>
             </div>
             <div className="bl-panel-body">
-              <p className="bl-p" style={{ fontSize: "1.3em", margin: "4px 0" }}>
+              <p className="bl-p bl-data" style={{ fontSize: "1.3em", margin: "4px 0" }}>
                 {inr(WB_ROWS)}
                 <span className="bl-dim bl-small"> rows</span>
               </p>
@@ -308,6 +490,8 @@ export default function HomeClient() {
             </div>
           </section>
         </div>
+
+        <RollHoldingsPanel />
 
         <section className="bl-panel" style={{ marginTop: 24 }}>
           <div className="bl-panel-head">
