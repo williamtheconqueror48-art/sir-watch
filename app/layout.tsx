@@ -36,9 +36,9 @@ export const metadata: Metadata = {
     siteName: "SIR-WATCH",
     images: [
       {
-        url: "https://sir-watch.vercel.app/og-image.png",
-        width: 2240,
-        height: 1120,
+        url: "https://sir-watch.vercel.app/og-image.jpg",
+        width: 1200,
+        height: 628,
         alt: "SIR-WATCH — Special Intensive Revision of Electoral Rolls",
       },
     ],
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: "SIR-WATCH — Special Intensive Revision Tracker",
     description:
       "A name-searchable public archive of SIR-affected electoral-roll records. Every row carries its source.",
-    images: ["https://sir-watch.vercel.app/og-image.png"],
+    images: ["https://sir-watch.vercel.app/og-image.jpg"],
   },
 };
 
