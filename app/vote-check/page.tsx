@@ -126,6 +126,8 @@ export default function VoteCheckPage() {
   const [parsedLive, setParsedLive] = useState<boolean | null>(null);
   const [parsedRowsTotal, setParsedRowsTotal] = useState<number | null>(null);
   const [groups, setGroups] = useState<Map<string, VintageGroup>>(new Map());
+  const [serviceRows, setServiceRows] = useState<ShardRecord[]>([]);
+  const [serviceRowsTotal, setServiceRowsTotal] = useState<number | null>(null);
   const [neon, setNeon] = useState<NeonRecord[]>([]);
   const [neonError, setNeonError] = useState(false);
 
@@ -143,19 +145,32 @@ export default function VoteCheckPage() {
       setParsedRowsTotal(hasInv ? (invMeta!.rows as number) : null);
 
       let invHits: ShardRecord[] = [];
+      let svcHits: ShardRecord[] = [];
       if (hasInv) {
         const hits = await searchShards(qq, 400);
         invHits = hits.filter((r) => r.dataset === "inv-rolls");
+        svcHits = hits.filter(
+          (r) =>
+            r.dataset === "kerala-service-2017" ||
+            r.dataset === "uttarakhand-service-2026"
+        );
         const sNeedle = state.trim().toLowerCase();
         const acNeedle = ac.trim().toLowerCase();
-        if (sNeedle)
-          invHits = invHits.filter((r) => r.state.toLowerCase().includes(sNeedle));
-        if (acNeedle)
-          invHits = invHits.filter((r) =>
-            (r.ac_name ?? "").toLowerCase().includes(acNeedle)
-          );
+        const filt = (r: ShardRecord) =>
+          (!sNeedle || r.state.toLowerCase().includes(sNeedle)) &&
+          (!acNeedle || (r.ac_name ?? "").toLowerCase().includes(acNeedle));
+        invHits = invHits.filter(filt);
+        svcHits = svcHits.filter(filt);
       }
       setGroups(groupByState(invHits));
+      setServiceRows(svcHits);
+      const svcRows =
+        (man?.["kerala-service-2017"] as { rows?: number } | undefined)?.rows ??
+        0;
+      const ukRows =
+        (man?.["uttarakhand-service-2026"] as { rows?: number } | undefined)
+          ?.rows ?? 0;
+      setServiceRowsTotal(svcRows + ukRows > 0 ? svcRows + ukRows : null);
 
       try {
         const params = new URLSearchParams({ page: "1", pageSize: "50" });
@@ -250,6 +265,14 @@ export default function VoteCheckPage() {
                   {parsedRowsTotal === null ? "…" : inr(parsedRowsTotal)}
                 </span>{" "}
                 ROWS IN THE inv-rolls DATASET · MANIFEST-VERIFIED
+                {serviceRowsTotal !== null && (
+                  <>
+                    {" "}·{" "}
+                    <span className="bl-data">{inr(serviceRowsTotal)}</span>{" "}
+                    SERVICE-ELECTOR ROWS (KERALA 2017 + UTTARAKHAND 2026 —
+                    SHOWN SEPARATELY, NOT PART OF THE COMPARISON)
+                  </>
+                )}
               </p>
             )}
 
@@ -328,6 +351,29 @@ export default function VoteCheckPage() {
                 </section>
               );
             })}
+
+            {parsedLive === true && serviceRows.length > 0 && (
+              <section className="bl-panel" style={{ marginTop: 24 }}>
+                <div className="bl-panel-head">
+                  <span>SERVICE-ELECTOR ROLLS — NOT PART OF THE SIR COMPARISON</span>
+                  <span className="bl-dim">
+                    MATCHES: {inr(serviceRows.length)}
+                  </span>
+                </div>
+                <div className="bl-panel-body">
+                  <p className="bl-p bl-dim bl-small">
+                    Service-elector rolls list defence and armed-police
+                    personnel posted away from home — they are a separate
+                    roll, not the civilian roll, and{" "}
+                    <strong>cannot answer whether SIR affected a vote</strong>.
+                    KERALA = 2017 Special Summary Revision (final publication
+                    10-01-2017; NOT pre/post-SIR). UTTARAKHAND = 2026
+                    post-SIR draft service entries.
+                  </p>
+                  <RollTable rows={serviceRows} />
+                </div>
+              </section>
+            )}
 
             <section style={{ marginTop: 32 }}>
               <h2 className="bl-h1">ADJUDICATION LEDGER (WEST BENGAL)</h2>

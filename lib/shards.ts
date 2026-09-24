@@ -16,7 +16,9 @@ export type ShardDatasetKey =
   | "kl-form9"
   | "kl-form10"
   | "kl-form11a"
-  | "inv-rolls";
+  | "inv-rolls"
+  | "kerala-service-2017"
+  | "uttarakhand-service-2026";
 
 type ShardManifest = {
   v: number;
@@ -34,6 +36,8 @@ type ShardManifest = {
     /** optional per-state parsed-row breakdown, keyed by state name */
     per_state?: Record<string, number>;
   };
+  "kerala-service-2017"?: DatasetMeta;
+  "uttarakhand-service-2026"?: DatasetMeta;
 };
 
 type ShardEntry = {
@@ -147,6 +151,10 @@ const DATASET_LABEL: Record<ShardDatasetKey, string> = {
     "Kerala SIR address-shift applications in Form 8 (Form-11A list — shifts within constituency; CEO Kerala)",
   "inv-rolls":
     "Parsed electoral rolls from CEO sites, vintage-labeled (pre-SIR / post-SIR). Claims & objections lists are labeled applications, not rolls.",
+  "kerala-service-2017":
+    "Kerala 2017 Special Summary Revision service-elector roll (defence/armed-police personnel and wives — NOT civilian rolls, NOT pre/post-SIR; excluded from the SIR comparison)",
+  "uttarakhand-service-2026":
+    "Uttarakhand 2026 service-elector entries from post-SIR draft-roll PDFs (full roll — NOT a deletion; CEO Uttarakhand)",
 };
 
 function fileUrl(meta: DatasetMeta, sourceFile: string | null): string {
@@ -242,10 +250,16 @@ function toRecord(
       source_url,
       source_label: DATASET_LABEL[ds],
     };
-  } else if (ds === "inv-rolls") {
+  } else if (
+    ds === "inv-rolls" ||
+    ds === "kerala-service-2017" ||
+    ds === "uttarakhand-service-2026"
+  ) {
     // Parsed electoral-roll rows: vintage_class is pre_sir | post_sir | other.
     // vintage_class=other rows are applications / claims & objections lists —
     // never treated as roll presence. EPICs are stored masked only.
+    // (kerala-service-2017 is the 2017 service-elector roll — vintage_class
+    // is "other" by definition, never part of the pre/post-SIR comparison.)
     state = g("state") ?? "NOT AVAILABLE IN SOURCE DATA";
     const vc = g("vintage_class");
     const vintage_class: ShardRecord["vintage_class"] =
@@ -258,7 +272,7 @@ function toRecord(
       state,
       district: g("district"),
       ac_name: g("ac_name"),
-      booth_no: g("part_number"),
+      booth_no: g("booth_no"),
       booth_name: null,
       deletion_reason: null,
       source_url,
@@ -318,6 +332,8 @@ export async function searchShards(query: string, limit = 200): Promise<ShardRec
     "kl-form10",
     "kl-form11a",
     "inv-rolls",
+    "kerala-service-2017",
+    "uttarakhand-service-2026",
   ];
   const per: ShardRecord[][] = await Promise.all(
     keys.map(async (dk) => {

@@ -316,22 +316,50 @@ const CARD_META: DatasetCard[] = [
       "Address shifts within the constituency — NOT corrections, NOT deletions. Zero plaintext EPICs found in any row (independent scan 2026-09-23).",
     source: "CEO Kerala (ceo.kerala.gov.in) · retrieved 2026-09-23",
   },
+  {
+    key: "inv-rolls",
+    title: "Parsed electoral rolls — pre/post-SIR",
+    state: "6 states/UTs",
+    what: "Electoral-roll rows parsed from CEO-site PDFs, each labeled with its roll vintage (pre-SIR, post-SIR, or other). Arunachal Pradesh (pre-SIR 2006), Delhi (pre-SIR), Goa (pre + post-SIR), Manipur (pre-SIR), Mizoram (other), Puducherry (pre + post-SIR). Powers the /vote-check comparison.",
+    claimNote:
+      "Counts are parsed source rows, not unique voters. vintage_class=other rows are claims/objections lists — never treated as roll presence. EPICs masked at parse time (two Arunachal masks are malformed from source OCR noise; masked, format issue only).",
+    source:
+      "CEO sites: Arunachal Pradesh, Delhi, Goa, Manipur, Mizoram, Puducherry · retrieved 2026-09-24",
+  },
+  {
+    key: "kerala-service-2017",
+    title: "Kerala service electors 2017",
+    state: "Kerala",
+    what: "Service-elector entries from the 2017 Special Summary Revision roll (final publication 10-01-2017): defence and armed-police personnel and their wives.",
+    claimNote:
+      "NOT Kerala civilian rolls and NOT pre/post-SIR — vintage_class=other, excluded from the vote-check comparison. EPIC-shaped strings in the rank column are military service numbers, not EPICs (verified 2026-09-24).",
+    source: "CEO Kerala (ceo.kerala.gov.in) · retrieved 2026-09-24",
+  },
+  {
+    key: "uttarakhand-service-2026",
+    title: "Uttarakhand service electors 2026",
+    state: "Uttarakhand",
+    what: "Service-elector entries from post-SIR draft-roll PDFs (the booth table yielded zero elector rows).",
+    claimNote:
+      "Draft-roll entries — NOT deletions. EPICs masked at parse time.",
+    source: "CEO Uttarakhand · retrieved 2026-09-24",
+  },
 ];
 
 const COVERAGE: [string, string, string][] = [
   ["Karnataka", "LIVE", "ASD index, discrepancy notices, ASDDO dashboard"],
   ["West Bengal", "LIVE", "Adjudication records — Bhabanipur + Ballygunge ACs, Kolkata"],
   ["Uttar Pradesh", "LIVE", "Service-elector draft entries, 4 ACs (not deletions)"],
-  ["Kerala", "LIVE", "Inclusion claims (Form 9), deletion objections (Form 10), address shifts (Form 11A)"],
+  ["Kerala", "LIVE", "Inclusion claims (Form 9), deletion objections (Form 10), address shifts (Form 11A) · service-elector roll 2017 parsed (89,885 rows — defence personnel, outside the SIR comparison)"],
   ["Chhattisgarh", "LIVE", "Objections to inclusion (Form 10), 6 DEO claim pages"],
-  ["Mizoram", "IN AUDIT", "6 rows + documents staged"],
-  ["Puducherry", "IN AUDIT", "9 rows (5 deletions + 4 additions) staged"],
+  ["Mizoram", "PARSED", "Roll PDFs parsed (1,591 rows, vintage: other) — searchable on /vote-check"],
+  ["Puducherry", "PARSED", "Pre-SIR (99 rows) + post-SIR (245 rows) roll PDFs parsed — side-by-side comparison live on /vote-check"],
   ["Bihar", "STAGED — UNAUDITED", "3 community datasets, ~595 MB"],
   ["Tamil Nadu", "AGGREGATES ONLY", "Cited ASD workbook ruled unusable; portal is CAPTCHA-gated"],
   ["Gujarat", "URL INDEX ONLY", "50,963-part fetch manifest; PDFs need India egress"],
   ["Rajasthan", "AGGREGATES ONLY", "Official totals only, no name-level data"],
   ["Madhya Pradesh", "AGGREGATES ONLY", "Official totals only, no name-level data"],
-  ["Delhi", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
+  ["Delhi", "PARSED", "Pre-SIR roll PDFs parsed (13,002 rows) — searchable on /vote-check"],
   ["Punjab", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
   ["Haryana", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
   ["Telangana", "BASELINE FRAGMENTS", "Archived pre-SIR PDFs only"],
@@ -340,16 +368,16 @@ const COVERAGE: [string, string, string][] = [
   ["Jammu & Kashmir", "NO SIR", "Deferred by ECI"],
   ["Ladakh", "NO SIR", "Deferred by ECI"],
   ["Assam", "NO SIR", "Special Revision instead of SIR"],
-  ["Goa", "HUNTED", "No public bulk name-level data found; browser leads queued"],
+  ["Goa", "PARSED", "Draft roll (pre-SIR, 112 rows) + final roll (post-SIR, 65 rows) parsed — side-by-side comparison live on /vote-check"],
   ["Chandigarh", "HUNTED", "No public bulk name-level data found; browser leads queued"],
   ["Dadra & Nagar Haveli and Daman & Diu", "HUNTED", "No public bulk name-level data found; browser leads queued"],
-  ["Uttarakhand", "HUNTED", "No public bulk name-level data found; browser leads queued"],
+  ["Uttarakhand", "PARSED", "Service-elector roll 2026 parsed (2,750 rows, post-SIR draft) — searchable on /vote-check"],
   ["Sikkim", "HUNTED", "No public bulk name-level data found; browser leads queued"],
   ["Meghalaya", "HUNTED", "Official ASD aggregate only (1,80,402); name lists need browser"],
   ["Nagaland", "HUNTED", "Booth-wise lists reportedly public now; browser lead queued"],
-  ["Arunachal Pradesh", "HUNTED", "Baseline sample only; ASD portal needs browser"],
+  ["Arunachal Pradesh", "PARSED", "Pre-SIR Intensive Roll 2006 parsed (6,905 rows) — searchable on /vote-check; no post-SIR roll fetched yet"],
   ["Tripura", "HUNTED", "Draft rolls expected ~14 Oct 2026"],
-  ["Manipur", "HUNTED", "Baseline claim rows only"],
+  ["Manipur", "PARSED", "Pre-SIR roll PDFs parsed (8,068 rows) — searchable on /vote-check"],
   ["Odisha", "HUNTED", "2002-baseline pilot only"],
   ["Andaman & Nicobar Islands", "HUNTED", "Service-roll entries only; draft/ASD lists need browser"],
   ["Lakshadweep", "HUNTED", "Official PDFs only (island-wise ASD table)"],
@@ -381,6 +409,9 @@ export default function HomeClient() {
         "kl-form9",
         "kl-form10",
         "kl-form11a",
+        "inv-rolls",
+        "kerala-service-2017",
+        "uttarakhand-service-2026",
       ]) {
         const d = man[k] as { rows?: number } | undefined;
         if (d && typeof d.rows === "number") rows[k] = d.rows;
@@ -395,6 +426,12 @@ export default function HomeClient() {
   const shardTotal = manifest
     ? Object.values(manifest.rows).reduce((a, b) => a + b, 0)
     : null;
+  const newHoldings =
+    manifest && manifest.rows
+      ? (manifest.rows["inv-rolls"] ?? 0) +
+        (manifest.rows["kerala-service-2017"] ?? 0) +
+        (manifest.rows["uttarakhand-service-2026"] ?? 0)
+      : null;
   const grandTotal = shardTotal === null ? null : shardTotal + WB_ROWS;
 
   return (
@@ -434,8 +471,11 @@ export default function HomeClient() {
             </p>
             <p className="bl-p bl-dim bl-small">
               {shardTotal === null ? "…" : inr(shardTotal)} static-archive rows
-              (Karnataka + Uttar Pradesh + Chhattisgarh + Kerala) + {inr(WB_ROWS)} West Bengal
-              adjudication records ({WB_LABEL}).
+              (Karnataka + Uttar Pradesh + Chhattisgarh + Kerala SIR-affected
+              indexes, claims &amp; objections) +{" "}
+              {newHoldings === null ? "…" : inr(newHoldings)} parsed-roll rows
+              (pre/post-SIR rolls + service-elector rolls) + {inr(WB_ROWS)}{" "}
+              West Bengal adjudication records ({WB_LABEL}).
             </p>
             <p className="bl-p bl-dim bl-small">
               COUNTING RULE: Karnataka&apos;s ASD index and ASDDO dashboard
@@ -496,14 +536,15 @@ export default function HomeClient() {
         <section className="bl-panel" style={{ marginTop: 24 }}>
           <div className="bl-panel-head">
             <span>COVERAGE — STATE BY STATE</span>
-            <span className="bl-dim">AS OF 2026-09-23</span>
+            <span className="bl-dim">AS OF 2026-09-24</span>
           </div>
           <div className="bl-panel-body">
             <p className="bl-p bl-dim bl-small" style={{ marginBottom: 12 }}>
-              LIVE = searchable now. IN AUDIT = staged, being verified before
+              LIVE = searchable now. PARSED = roll PDFs parsed and searchable
+              on /vote-check. IN AUDIT = staged, being verified before
               publication. HUNTED = the all-states hunt found no public
-              bulk name-level SIR data. Only verified SIR-affected records are
-              published — never full rolls, never estimates.
+              bulk name-level SIR data. Only verified public records are
+              published — every row carries its source. Never estimates.
             </p>
             <div style={{ overflowX: "auto" }}>
               <table className="bl-table">
