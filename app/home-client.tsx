@@ -18,6 +18,7 @@ const NAV = [
   { href: "/notices", label: "NOTICES" },
   { href: "/case", label: "SC CASE" },
   { href: "/deletions", label: "NAME SEARCH" },
+  { href: "/inventory", label: "ROLL INVENTORY" },
   { href: "/methodology", label: "METHODOLOGY" },
 ];
 

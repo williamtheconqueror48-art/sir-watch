@@ -282,3 +282,41 @@ a:hover {
   border: 2px solid var(--ink);
   border-radius: 50%;
 }
+
+/* ---- inventory page ---- */
+.bl-lede { max-width: 80ch; margin: 0 0 12px; }
+.bl-caveats {
+  border: 2px solid var(--amber, #a60);
+  padding: 10px 12px;
+  margin: 0 0 16px;
+  font-size: 12px;
+  max-width: 100ch;
+}
+.bl-inv-stats {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  font-size: 12px; letter-spacing: 0.06em;
+  margin: 0 0 12px;
+}
+.bl-filters {
+  display: flex; gap: 16px; flex-wrap: wrap; align-items: end;
+  margin: 0 0 8px;
+}
+.bl-filters label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; letter-spacing: 0.08em; }
+.bl-filters select, .bl-filters input {
+  background: var(--bg); color: var(--fg);
+  border: 1px solid var(--faint); padding: 6px 8px; font-size: 13px;
+}
+.bl-filter-search input { min-width: 240px; }
+.bl-count { font-size: 12px; color: var(--dim); margin: 8px 0; }
+.bl-table-scroll { overflow-x: auto; }
+.bl-url { font-size: 10px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.bl-foot { font-size: 11px; color: var(--dim); max-width: 90ch; margin: 16px 0; }
+.bl-error { color: var(--red, #c00); }
+.bl-tag {
+  display: inline-block; font-size: 10px; letter-spacing: 0.06em;
+  border: 1px solid currentColor; padding: 2px 6px; white-space: nowrap;
+}
+.bl-tag-main_roll, .bl-tag-service_elector_roll { color: var(--green, #080); }
+.bl-tag-supplement, .bl-tag-claims_objections, .bl-tag-asdd_list { color: var(--amber, #a60); }
+.bl-tag-council_roll, .bl-tag-statistics, .bl-tag-press_notice,
+.bl-tag-instruction, .bl-tag-listing_page { color: var(--dim); }
